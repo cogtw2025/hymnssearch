@@ -15,8 +15,10 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
     <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
-        <h1 class="text-2xl font-bold text-center mb-2">神家詩歌搜尋</h1>
-
+        <div class="relative text-center mb-2">
+            <h1 class="text-2xl font-bold">神家詩歌搜尋</h1>
+            <span class="absolute right-0 bottom-0 text-xs text-gray-400 pb-1">台北市神的教會製作</span>
+        </div>
         <div id="top-controls-container" class="flex justify-center items-center my-4">
             <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden mr-auto">← 返回首頁</button>
             <div class="flex items-center space-x-4 ml-auto">
@@ -40,17 +42,18 @@
                 class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
             <button id="voiceSearchBtn" class="p-2 text-gray-600 hover:text-blue-600 focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <svg id="voice-mic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m12 0v-1.5a6 6 0 0 0-12 0v1.5m12 0v-1.5a6 6 0 0 0-12 0v1.5m6 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
                 </svg>
-            </button>
+                <svg id="voice-stop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden text-red-500">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
+                </svg>
+</button>
         </div>
 
         <div id="hymn-collections" class="mt-6 pt-4 border-t">
-            <h2 class="text-lg font-semibold text-center text-gray-700 mb-3">詩歌集列表</h2>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2 text-gray-600 font-size-ui">
-                <p>H0000 神家詩歌合訂本(1)</p>
-                <p>HH000 神家詩歌合訂本(2)</p>
+            <h2 class="text-lg font-semibold text-center text-gray-700 mb-3">詩歌集列表(可點選)</h2>
+            <div class="grid grid-cols-3 sm:grid-cols-3 gap-x-4 gap-y-2 text-gray-600 font-size-ui">
                 <p>0000 愛的迴響</p>
                 <p>01000 神家詩歌第一集</p>
                 <p>0200 神家詩歌第二集</p>
@@ -75,11 +78,15 @@
                 <p>2100 神家詩歌第二十一集</p>
                 <p>2200 神家詩歌第二十二集</p>
                 <p>2300 神家詩歌第二十三集</p>
+                <p>H0000 神家詩歌合訂本(1)</p>
+                <p>HH000 神家詩歌合訂本(2)</p>
             </div>
         </div>
 
         <div id="results" class="space-y-4 mt-4"></div>
-    </div>
+     <div> <footer class="mt-4 text-center text-xs text-gray-500 pb-4">
+        <p>© <span id="copyright-year"></span> 台北市神的教會製作. All Rights Reserved. 版權所有.</p>
+    </footer>
     <script src="script.js"></script>
 </body>
 </html>
