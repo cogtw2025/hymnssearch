@@ -1,0 +1,139 @@
+/* --- 全新 CSS 樣式檔案 --- */
+:root {
+    /* 淺色模式的顏色變數 */
+    --bg-color: #f3f4f6; /* 頁面背景 */
+    --content-bg-color: #ffffff; /* 內容區塊背景 */
+    --text-color: #1f2937; /* 主要文字顏色 */
+    --text-secondary-color: #4b5563; /* 次要文字顏色 */
+    --border-color: #e5e7eb; /* 邊框顏色 */
+    --hover-bg-color: #f3f4f6; /* 滑鼠懸停背景色 */
+    --accent-color: #3b82f6; /* 主題色 (藍色) */
+    --accent-text-color: #ffffff; /* 主題色上的文字 (白色) */
+}
+
+.dark {
+    /* 深色模式的顏色變數 */
+    --bg-color: #111827;
+    --content-bg-color: #1f2937;
+    --text-color: #d1d5db;
+    --text-secondary-color: #9ca3af;
+    --border-color: #374151;
+    --hover-bg-color: #374151;
+    --accent-color: #60a5fa;
+    --accent-text-color: #111827;
+}
+
+/* 基礎設定 */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Noto Sans TC', sans-serif; /* 使用 Noto Sans TC 字體 */
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 主內容區塊 */
+#main-content {
+    background-color: var(--content-bg-color);
+    width: 100%;
+    max-width: 48rem; /* 稍微加寬以容納更多內容 */
+    transition: background-color 0.3s;
+}
+
+/* 搜尋框與按鈕 */
+input[type="text"] {
+    background-color: var(--bg-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.font-button, #back-to-home-btn, #theme-toggle, #voiceSearchBtn {
+    color: var(--text-secondary-color);
+    border-color: var(--border-color);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.font-button:hover, #back-to-home-btn:hover, #theme-toggle:hover, #voiceSearchBtn:hover {
+    background-color: var(--hover-bg-color);
+    color: var(--text-color);
+}
+
+#voiceSearchBtn:hover {
+    color: var(--accent-color);
+}
+
+h1, h2, h3 {
+    color: var(--text-color);
+}
+span, p {
+    color: var(--text-secondary-color);
+}
+#results h2, #results .text-blue-600 { /* 搜尋結果的標題顏色 */
+     color: var(--accent-color);
+}
+#results pre { /* 詩歌內文顏色 */
+     color: var(--text-color);
+}
+#hymn-collections, #results .border-b {
+    border-color: var(--border-color);
+}
+
+/* 詩歌集列表項目互動效果 */
+#hymn-collections p {
+    transition: color 0.2s; /* 增加顏色變化的過渡效果 */
+}
+
+/* 動畫：搜尋結果淡入效果 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#results > * {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* 字體大小的級距 (六種大小) */
+#main-content.font-size-1 .font-size-title { font-size: 0.875rem; }
+#main-content.font-size-1 .font-size-content { font-size: 0.75rem; line-height: 1.5; }
+#main-content.font-size-1 .font-size-ui { font-size: 0.625rem; }
+#main-content.font-size-1 .font-size-message { font-size: 0.75rem; }
+
+#main-content.font-size-2 .font-size-title { font-size: 1rem; }
+#main-content.font-size-2 .font-size-content { font-size: 0.875rem; line-height: 1.5; }
+#main-content.font-size-2 .font-size-ui { font-size: 0.75rem; }
+#main-content.font-size-2 .font-size-message { font-size: 0.875rem; }
+
+#main-content.font-size-3 .font-size-title { font-size: 1.125rem; }
+#main-content.font-size-3 .font-size-content { font-size: 1rem; line-height: 1.6; }
+#main-content.font-size-3 .font-size-ui { font-size: 0.875rem; }
+#main-content.font-size-3 .font-size-message { font-size: 1rem; }
+
+#main-content.font-size-4 .font-size-title { font-size: 1.5rem; }
+#main-content.font-size-4 .font-size-content { font-size: 1.25rem; line-height: 1.6; }
+#main-content.font-size-4 .font-size-ui { font-size: 1rem; }
+#main-content.font-size-4 .font-size-message { font-size: 1.25rem; }
+
+#main-content.font-size-5 .font-size-title { font-size: 2.0rem; }
+#main-content.font-size-5 .font-size-content { font-size: 1.5rem; line-height: 1.7; }
+#main-content.font-size-5 .font-size-ui { font-size: 1.25rem; }
+#main-content.font-size-5 .font-size-message { font-size: 1.5rem; }
+
+#main-content.font-size-6 .font-size-title { font-size: 2.5rem; }
+#main-content.font-size-6 .font-size-content { font-size: 2.0rem; line-height: 1.7; }
+#main-content.font-size-6 .font-size-ui { font-size: 1.5rem; }
+#main-content.font-size-6 .font-size-message { font-size: 1.75rem; }
+
+/* 禁用按鈕的樣式 */
+.font-button:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #d1d5db;
+}
+
+.dark .font-button:disabled {
+     background-color: #374151;
+     color: #6b7280;
+     border-color: #4b5563;
+}
