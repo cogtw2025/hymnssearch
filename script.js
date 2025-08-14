@@ -22,28 +22,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightIcon = document.getElementById('theme-toggle-light-icon');
     
     // --- 深色模式邏輯 ---
-    // 檢查 localStorage 中是否有主題設定，或根據使用者系統偏好設定
-    const isDarkMode = localStorage.getItem('theme') === 'dark' || 
-                      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
-
     function applyTheme(isDark) {
         if (isDark) {
             document.documentElement.classList.add('dark');
-            darkIcon.classList.remove('hidden');
-            lightIcon.classList.add('hidden');
+            lightIcon.classList.remove('hidden');
+            darkIcon.classList.add('hidden');
             localStorage.setItem('theme', 'dark');
         } else {
             document.documentElement.classList.remove('dark');
-            darkIcon.classList.add('hidden');
-            lightIcon.classList.remove('hidden');
+            lightIcon.classList.add('hidden');
+            darkIcon.classList.remove('hidden');
             localStorage.setItem('theme', 'light');
         }
     }
     
-    // 初始載入時套用主題
-    applyTheme(isDarkMode);
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const currentTheme = localStorage.getItem('theme');
 
-    // 切換按鈕事件
+    if (currentTheme === 'dark' || (!currentTheme && prefersDark)) {
+        applyTheme(true);
+    } else {
+        applyTheme(false);
+    }
+
     themeToggleBtn.addEventListener('click', () => {
         const isCurrentlyDark = document.documentElement.classList.contains('dark');
         applyTheme(!isCurrentlyDark);
@@ -104,13 +105,13 @@ function displayInitialMessage(showUI = true) {
     resultsDiv.innerHTML = `
         <div class="text-center text-gray-500 pt-8 px-4 font-size-message">
             <h3 class="text-lg font-semibold">歡迎使用詩歌搜尋</h3>
-            <p class="mt-2">請在上方搜尋框中，輸入詩歌的<br>代碼、名稱、或部分歌詞來開始搜尋，<br>或點擊下方詩歌集列表進行瀏覽。</p>
+            <p class="mt-2">請在上方搜尋框中，輸入詩歌的代碼、名稱、或部分歌詞來開始搜尋，或點擊下方詩歌集列表進行瀏覽。</p>
         </div>
     `;
 
     backToHomeBtn.classList.add('hidden');
-    // --- 修改 --- 使用 replace 避免重複添加 class
-    topControlsContainer.classList.replace('justify-between', 'justify-center');
+    topControlsContainer.classList.remove('justify-between');
+    topControlsContainer.classList.add('justify-center');
 
     if (showUI) {
         searchContainer.classList.remove('hidden');
@@ -200,10 +201,10 @@ function renderHymnList(collectionName) {
 
 // 顯示單首詩歌的完整內容
 function renderHymnContent(hymn, collectionName) {
-    topControlsContainer.classList.remove('hidden'); // 顯示控制項
-    // 瀏覽時返回按鈕在左，字體控制在右
-    backToHomeBtn.classList.add('hidden'); // 這裡不需要返回首頁按鈕，已有返回列表按鈕
-    topControlsContainer.classList.replace('justify-center', 'justify-between');
+    topControlsContainer.classList.remove('hidden');
+    backToHomeBtn.classList.add('hidden');
+    topControlsContainer.classList.remove('justify-center');
+    topControlsContainer.classList.add('justify-between');
 
     resultsDiv.innerHTML = `
         <button id="backToHymnList" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors w-full mb-4">← 返回 "${collectionName}" 列表</button>
@@ -214,7 +215,7 @@ function renderHymnContent(hymn, collectionName) {
         </div>
     `;
     document.getElementById('backToHymnList').addEventListener('click', () => {
-        topControlsContainer.classList.add('hidden'); // 返回列表時隱藏
+        topControlsContainer.classList.add('hidden');
         renderHymnList(collectionName);
     });
 }
@@ -279,35 +280,70 @@ searchInput.addEventListener('input', (e) => {
     }
 });
 
-// 語音辨識功能
+
+// --- 語音辨識功能 (全新版本) ---
 const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+const voiceMicIcon = document.getElementById('voice-mic-icon');
+const voiceStopIcon = document.getElementById('voice-stop-icon');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+let isRecognizing = false; // 追蹤辨識狀態
 
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'zh-TW';
-    recognition.continuous = false;
-    recognition.interimResults = false;
+    recognition.continuous = true; // 修改：啟用連續辨識
+    recognition.interimResults = true; // 修改：啟用即時結果
 
     voiceSearchBtn.addEventListener('click', () => {
-        voiceSearchBtn.classList.add('text-blue-600');
-        recognition.start();
+        if (isRecognizing) {
+            recognition.stop();
+        } else {
+            searchInput.value = ''; // 每次開始前清空
+            recognition.start();
+        }
     });
 
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        searchInput.value = transcript;
-        const inputEvent = new Event('input', { bubbles: true });
-        searchInput.dispatchEvent(inputEvent);
+    recognition.onstart = () => {
+        isRecognizing = true;
+        voiceMicIcon.classList.add('hidden');
+        voiceStopIcon.classList.remove('hidden');
     };
-    
+
     recognition.onend = () => {
-        voiceSearchBtn.classList.remove('text-blue-600');
+        isRecognizing = false;
+        voiceMicIcon.classList.remove('hidden');
+        voiceStopIcon.classList.add('hidden');
+        // 辨識結束時，確保觸發一次 input 事件以執行最終搜尋
+        const finalInputEvent = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(finalInputEvent);
     };
-    
+
     recognition.onerror = (event) => {
         console.error('語音辨識錯誤:', event.error);
-        voiceSearchBtn.classList.remove('text-blue-600');
+        isRecognizing = false;
+        voiceMicIcon.classList.remove('hidden');
+        voiceStopIcon.classList.add('hidden');
+    };
+    
+    recognition.onresult = (event) => {
+        let interimTranscript = '';
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+            } else {
+                interimTranscript += event.results[i][0].transcript;
+            }
+        }
+        
+        // 將最終和即時結果合併顯示
+        searchInput.value = finalTranscript + interimTranscript;
+
+        // 觸發 input 事件，讓搜尋結果即時更新
+        const inputEvent = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(inputEvent);
     };
     
 } else {
