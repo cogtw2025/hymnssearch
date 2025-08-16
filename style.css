@@ -13,12 +13,12 @@
 
 .dark {
     /* 深色模式的顏色變數 */
-    --bg-color: #111827;
-    --content-bg-color: #1f2937;
+    --bg-color: #000000; /* 改為純黑色背景 */
+    --content-bg-color: #121212; /* 內容區塊使用深灰色 */
     --text-color: #d1d5db;
     --text-secondary-color: #9ca3af;
-    --border-color: #374151;
-    --hover-bg-color: #374151;
+    --border-color: #27272a; /* 調整邊框顏色以搭配黑色 */
+    --hover-bg-color: #27272a; /* 調整懸停顏色以搭配黑色 */
     --accent-color: #60a5fa;
     --accent-text-color: #111827;
 }
@@ -35,7 +35,7 @@ body {
 #main-content {
     background-color: var(--content-bg-color);
     width: 100%;
-    max-width: 48rem; /* 稍微加寬以容納更多內容 */
+    /* max-width: 48rem;  <-- 已移除此行，讓內容滿版 */
     transition: background-color 0.3s;
 }
 
@@ -136,4 +136,15 @@ span, p {
      background-color: #374151;
      color: #6b7280;
      border-color: #4b5563;
+}
+
+.relative.text-center.mb-2 h1 {
+    margin-bottom: 0.5rem; /* 稍微縮小主標題的下邊距 */
+}
+
+.relative.text-center.mb-2 span.absolute {
+    position: static; /* 在小螢幕上取消絕對定位 */
+    display: block; /* 使其佔據一行 */
+    text-align: center; /* 文字置中 */
+    margin-top: 0.25rem; /* 增加頂部外邊距，與主標題分開 */
 }
