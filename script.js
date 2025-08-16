@@ -107,11 +107,10 @@ function displayInitialMessage(showUI = true) {
                 使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
             </div>
             <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4">
-                <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞</p>
-                <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容</p>
-                <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌</p>
-                <p><strong>調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體</p>
-                <p><strong>調整深色模式：</strong> 點擊上方類似月亮圖示，即可調整黑色或白色顯示</p>
+                <p><strong>- 關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
+                <p><strong>- 詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
+                <p><strong>- 語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
+                <p><strong>- 調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
             </div>
         </div>
     `;
@@ -280,10 +279,19 @@ function displayResults(results) {
     });
 }
 
-// 輸入事件的監聽器
-searchInput.addEventListener('input', (e) => {
-    const query = e.target.value.trim();
-    
+// *** NEW: Debounce function for performance improvement ***
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+// The actual search logic that will be debounced
+const handleSearch = (query) => {
     if (query === '') {
         displayInitialMessage(true);
     } else {
@@ -291,6 +299,14 @@ searchInput.addEventListener('input', (e) => {
         const results = searchHymns(query);
         displayResults(results);
     }
+};
+
+// Create a debounced version of the search handler
+const debouncedSearchHandler = debounce(handleSearch, 300); // 300ms delay
+
+// Listen for input events and call the debounced handler
+searchInput.addEventListener('input', (e) => {
+    debouncedSearchHandler(e.target.value.trim());
 });
 
 
@@ -305,14 +321,14 @@ let isRecognizing = false; // 追蹤辨識狀態
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'zh-TW';
-    recognition.continuous = true; // 修改：啟用連續辨識
-    recognition.interimResults = true; // 修改：啟用即時結果
+    recognition.continuous = true; 
+    recognition.interimResults = true;
 
     voiceSearchBtn.addEventListener('click', () => {
         if (isRecognizing) {
             recognition.stop();
         } else {
-            searchInput.value = ''; // 每次開始前清空
+            searchInput.value = ''; 
             recognition.start();
         }
     });
@@ -327,7 +343,6 @@ if (SpeechRecognition) {
         isRecognizing = false;
         voiceMicIcon.classList.remove('hidden');
         voiceStopIcon.classList.add('hidden');
-        // 辨識結束時，確保觸發一次 input 事件以執行最終搜尋
         const finalInputEvent = new Event('input', { bubbles: true });
         searchInput.dispatchEvent(finalInputEvent);
     };
@@ -351,10 +366,7 @@ if (SpeechRecognition) {
             }
         }
         
-        // 將最終和即時結果合併顯示
         searchInput.value = finalTranscript + interimTranscript;
-
-        // 觸發 input 事件，讓搜尋結果即時更新
         const inputEvent = new Event('input', { bubbles: true });
         searchInput.dispatchEvent(inputEvent);
     };
