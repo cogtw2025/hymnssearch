@@ -16,14 +16,41 @@
 <body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
     <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
         <div class="relative text-center mb-2">
-            <h1 class="text-2xl font-bold">神家詩歌搜尋</h1>
+            <h1 class="font-bold font-size-title">神家詩歌搜尋</h1>
             <span class="absolute right-0 bottom-0 text-xs text-gray-400 pb-1">台北市神的教會製作</span>
         </div>
-        <div id="top-controls-container" class="flex justify-center items-center my-4">
-            <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden mr-auto">← 返回首頁</button>
-            <div class="flex items-center space-x-4 ml-auto">
+
+        <!-- 返回首頁按鈕的容器 -->
+        <div class="my-4">
+             <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden w-full sm:w-auto">← 返回首頁</button>
+        </div>
+
+        <!-- 全新的整合控制列 -->
+        <div id="main-controls-container" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4">
+            <!-- 搜尋框與語音按鈕 (會自動擴展) -->
+            <div class="flex-grow flex items-center relative">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="輸入詩歌名稱、歌詞或代碼"
+                    class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+                >
+                <button id="voiceSearchBtn" class="absolute right-0 top-0 h-full px-3 text-gray-600 hover:text-blue-600 focus:outline-none">
+                    <svg id="voice-mic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 01-14 0v-2" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19v3" />
+                    </svg>
+                    <svg id="voice-stop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden text-red-500">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- 設定按鈕群組 (字體與主題) -->
+            <div class="flex items-center justify-center sm:justify-end space-x-4 flex-shrink-0">
                 <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-600 font-size-ui">字體大小:</span>
+                    <span class="text-sm text-gray-600 font-size-ui hidden sm:inline">字體:</span>
                     <button id="decrease-font" class="font-button text-lg font-bold border rounded-md px-4 py-1 hover:bg-gray-200 transition-colors w-12">-</button>
                     <button id="increase-font" class="font-button text-lg font-bold border rounded-md px-4 py-1 hover:bg-gray-200 transition-colors w-12">+</button>
                 </div>
@@ -34,59 +61,44 @@
             </div>
         </div>
         
-        <div class="flex items-center space-x-2">
-            <input
-                type="text"
-                id="searchInput"
-                placeholder="輸入詩歌名稱、歌詞或代碼"
-                class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-            <button id="voiceSearchBtn" class="p-2 text-gray-600 hover:text-blue-600 focus:outline-none">
-                <svg id="voice-mic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m12 0v-1.5a6 6 0 0 0-12 0v1.5m12 0v-1.5a6 6 0 0 0-12 0v1.5m6 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
-                </svg>
-                <svg id="voice-stop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden text-red-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
-                </svg>
-</button>
-        </div>
+        <div id="results" class="space-y-4 mt-4"></div>
 
         <div id="hymn-collections" class="mt-6 pt-4 border-t">
-            <h2 class="text-lg font-semibold text-center text-gray-700 mb-3">詩歌集列表(可點選)</h2>
-            <div class="grid grid-cols-3 sm:grid-cols-3 gap-x-4 gap-y-2 text-gray-600 font-size-ui">
-                <p>0000 愛的迴響</p>
-                <p>01000 神家詩歌第一集</p>
-                <p>0200 神家詩歌第二集</p>
-                <p>0300 神家詩歌第三集</p>
-                <p>0400 神家詩歌第四集</p>
-                <p>0500 神家詩歌第五集</p>
-                <p>0600 神家詩歌第六集</p>
-                <p>0700 神家詩歌第七集</p>
-                <p>0800 神家詩歌第八集</p>
-                <p>0900 神家詩歌第九集</p>
-                <p>10000 神家詩歌第十集</p>
-                <p>11000 神家詩歌第十一集</p>
-                <p>1200 神家詩歌第十二集</p>
-                <p>1300 神家詩歌第十三集</p>
-                <p>1400 神家詩歌第十四集</p>
-                <p>1500 神家詩歌第十五集</p>
-                <p>1600 神家詩歌第十六集</p>
-                <p>1700 神家詩歌第十七集</p>
-                <p>1800 神家詩歌第十八集</p>
-                <p>1900 神家詩歌第十九集</p>
-                <p>2000 神家詩歌第二十集</p>
-                <p>2100 神家詩歌第二十一集</p>
-                <p>2200 神家詩歌第二十二集</p>
-                <p>2300 神家詩歌第二十三集</p>
-                <p>H0000 神家詩歌合訂本(1)</p>
-                <p>HH000 神家詩歌合訂本(2)</p>
+            <h2 class="font-semibold text-center text-gray-700 mb-3 font-size-title">詩歌集列表(可點選)</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-size-ui">
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0000 愛的迴響</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>01000 神家詩歌第一集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0200 神家詩歌第二集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0300 神家詩歌第三集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0400 神家詩歌第四集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0500 神家詩歌第五集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0600 神家詩歌第六集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0700 神家詩歌第七集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0800 神家詩歌第八集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0900 神家詩歌第九集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>10000 神家詩歌第十集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>11000 神家詩歌第十一集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1200 神家詩歌第十二集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1300 神家詩歌第十三集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1400 神家詩歌第十四集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1500 神家詩歌第十五集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1600 神家詩歌第十六集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1700 神家詩歌第十七集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1800 神家詩歌第十八集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1900 神家詩歌第十九集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2000 神家詩歌第二十集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2100 神家詩歌第二十一集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2200 神家詩歌第二十二集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2300 神家詩歌第二十三集</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H0000 神家詩歌合訂本(1)</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>HH000 神家詩歌合訂本(2)</p></div>
             </div>
         </div>
 
-        <div id="results" class="space-y-4 mt-4"></div>
      <div> <footer class="mt-4 text-center text-xs text-gray-500 pb-4">
         <p>© <span id="copyright-year"></span> 台北市神的教會製作. All Rights Reserved. 版權所有.</p>
     </footer>
     <script src="script.js"></script>
+    
 </body>
 </html>
