@@ -168,14 +168,14 @@ fetch('hymns.json')
 
 // 讓詩歌集列表可以被點擊的函式
 function makeCollectionsClickable() {
-    const collectionElements = hymnCollectionsDiv.querySelectorAll('p');
+    const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p'); // More specific selector
     collectionElements.forEach(p => {
         const text = p.textContent.trim();
         const collectionName = text.substring(text.indexOf(' ')).trim();
 
         if (collections[collectionName]) {
-            p.style.cursor = 'pointer';
-            p.addEventListener('click', (e) => {
+            p.parentElement.style.cursor = 'pointer'; // Make the whole card clickable
+            p.parentElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 renderHymnList(collectionName);
             });
@@ -201,7 +201,7 @@ function renderHymnList(collectionName) {
     if (hymnsInCollection) {
         hymnsInCollection.forEach(hymn => {
             const hymnLink = document.createElement('div');
-            hymnLink.className = 'p-3 border rounded-md cursor-pointer hover:bg-gray-200 transition-colors font-size-ui';
+            hymnLink.className = 'p-3 border rounded-md cursor-pointer hover:bg-gray-200 transition-colors font-size-ui dark:border-gray-700 dark:hover:bg-gray-800';
             hymnLink.textContent = `${hymn.code} - ${hymn.title}`;
             hymnLink.addEventListener('click', () => renderHymnContent(hymn, collectionName));
             hymnList.appendChild(hymnLink);
@@ -294,11 +294,19 @@ function debounce(func, delay) {
 const handleSearch = (query) => {
     if (query === '') {
         displayInitialMessage(true);
-    } else {
-        hymnCollectionsDiv.classList.add('hidden');
-        const results = searchHymns(query);
-        displayResults(results);
+        return;
     }
+    
+    // *** NEW: Only search numbers if length is 4 or more ***
+    const isNumeric = /^\d+$/.test(query);
+    if (isNumeric && query.length < 4) {
+        resultsDiv.innerHTML = ''; // Clear results while typing short numbers
+        return; // Stop here and don't search
+    }
+
+    hymnCollectionsDiv.classList.add('hidden');
+    const results = searchHymns(query);
+    displayResults(results);
 };
 
 // Create a debounced version of the search handler
