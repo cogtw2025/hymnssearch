@@ -17,17 +17,17 @@
     <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
         <div class="relative text-center mb-2">
             <h1 class="font-bold font-size-title">神家詩歌搜尋</h1>
+           
             <span class="absolute right-0 bottom-0 text-xs text-gray-400 pb-1">台北市神的教會製作</span>
+             
         </div>
 
-        <!-- 返回首頁按鈕的容器 -->
         <div class="my-4">
              <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden w-full sm:w-auto">← 返回首頁</button>
-        </div>
+            
+            </div>
 
-        <!-- 全新的整合控制列 -->
         <div id="main-controls-container" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4">
-            <!-- 搜尋框與語音按鈕 (會自動擴展) -->
             <div class="flex-grow flex items-center relative">
                 <input
                     type="text"
@@ -47,7 +47,6 @@
                 </button>
             </div>
             
-            <!-- 設定按鈕群組 (字體與主題) -->
             <div class="flex items-center justify-center sm:justify-end space-x-4 flex-shrink-0">
                 <div class="flex items-center space-x-2">
                     <span class="text-sm text-gray-600 font-size-ui hidden sm:inline">字體:</span>
@@ -61,13 +60,20 @@
             </div>
         </div>
         
+        <div class="text-center">
+            <p class="text-gray-500 italic text-sm mt-2 font-size-ui">
+            「我要一生向耶和華唱詩！我還活的時候，要向我神歌頌！」 — 詩篇 104:33
+            </p>
+        </div>
         <div id="results" class="space-y-4 mt-4"></div>
 
         <div id="hymn-collections" class="mt-6 pt-4 border-t">
             <h2 class="font-semibold text-center text-gray-700 mb-3 font-size-title">詩歌集列表(可點選)</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-size-ui">
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H000 神家詩歌合訂本(1)</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H0000 神家詩歌合訂本(1)</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>HH000 神家詩歌合訂本(2)</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>甜跪＆歡呼</p></div>
+
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0000 愛的迴響</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>01000 神家詩歌第一集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0200 神家詩歌第二集</p></div>
@@ -92,6 +98,7 @@
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2100 神家詩歌第二十一集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2200 神家詩歌第二十二集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2300 神家詩歌第二十三集</p></div>
+                            
 
             </div>
         </div>
