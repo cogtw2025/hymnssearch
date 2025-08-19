@@ -3,6 +3,17 @@
 let hymns = [];
 let collections = {}; // 用於按詩歌集分組數據
 
+// --- 新增：定義 "甜跪＆歡呼" 的內容 ---
+const specialContent = {
+    title: "甜跪＆歡呼",
+    content: `主啊！寶貴今日是袮所訂定的日子，使我在其中因袮高興歡喜
+主啊！寶貴袮已經復活了！袮是我的倚靠，必定會幫助我
+寶貴袮榮耀託付了我，今天必定最有意義、最喜樂
+阿爸！無限寶貴袮是我的親阿爸，我是袮的親孩子，我從袮而生，袮最愛我、最喜歡我！
+主啊！無限寶貴袮與我永遠聯合！袮是我的真良人，我是袮的至愛佳偶，袮的能力全屬我！主啊！我愛袮！
+主啊！人生有袮，袮必使我人生極其精彩難忘，成爲教會與多人的祝福！`
+};
+
 // 獲取頁面上需要操作的核心元素
 const searchInput = document.getElementById('searchInput');
 const resultsDiv = document.getElementById('results');
@@ -20,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const darkIcon = document.getElementById('theme-toggle-dark-icon');
     const lightIcon = document.getElementById('theme-toggle-light-icon');
     
-    // --- 深色模式邏輯 ---
+    // 深色模式邏輯...
     function applyTheme(isDark) {
         if (isDark) {
             document.documentElement.classList.add('dark');
@@ -49,8 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         applyTheme(!isCurrentlyDark);
     });
 
-
-    // --- 字體大小邏輯 (六種大小) ---
+    // 字體大小邏輯...
     const fontSizes = ['font-size-1', 'font-size-2', 'font-size-3', 'font-size-4', 'font-size-5', 'font-size-6'];
     let currentSizeIndex;
 
@@ -153,10 +163,8 @@ fetch('hymns.json')
             return acc;
         }, {});
 
-        // --- 建立 H 和 HH 合訂本 ---
         const hCollection = [];
-        // --- 再次修正：更新 H 合訂本的篩選規則，排除 KHxxx 等情況 ---
-        const hRegex = /(?<![a-zA-Z])H([0-9]{3})/; // 要求 H 前面不能是任何英文字母
+        const hRegex = /(?<![a-zA-Z])H([0-9]{3})/;
 
         hymns.forEach(hymn => {
             if (hymn.title) {
@@ -186,7 +194,6 @@ fetch('hymns.json')
         });
         
         if (hCollection.length > 0) {
-            // --- 同步修正排序用的規則 ---
             const hRegexSort = /(?<![a-zA-Z])H([0-9]{3})/;
             hCollection.sort((a, b) => {
                 const matchA = a.title.match(hRegexSort);
@@ -222,13 +229,42 @@ fetch('hymns.json')
         console.error("Fetch Error:", error);
     });
 
-// 讓詩歌集列表可以被點擊的函式
+// --- 新增：顯示 "甜跪＆歡呼" 內容的函式 ---
+function renderSpecialContent() {
+    mainControlsContainer.classList.add('hidden');
+    hymnCollectionsDiv.classList.add('hidden');
+    
+    resultsDiv.innerHTML = `
+        <button id="backToCollections" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors w-full mb-4">← 返回詩歌集列表</button>
+        <div class="border-b pb-4">
+            <h2 class="text-lg font-semibold text-blue-600 font-size-title">${specialContent.title}</h2>
+            <pre class="mt-4 text-gray-800 whitespace-pre-wrap font-size-content">${specialContent.content}</pre>
+        </div>
+    `;
+    
+    document.getElementById('backToCollections').addEventListener('click', () => {
+        displayInitialMessage(true);
+    });
+}
+
+// --- 修改：讓詩歌集列表（包含新的按鈕）可以被點擊 ---
 function makeCollectionsClickable() {
     const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p');
     collectionElements.forEach(p => {
         const text = p.textContent.trim();
-        const collectionName = text.substring(text.indexOf(' ')).trim();
 
+        // 特別處理 "甜跪＆歡呼" 按鈕
+        if (text === '甜跪＆歡呼') {
+            p.parentElement.style.cursor = 'pointer';
+            p.parentElement.addEventListener('click', (e) => {
+                e.preventDefault();
+                renderSpecialContent();
+            });
+            return; // 處理完畢，跳到下一個按鈕
+        }
+
+        // 其他詩歌集按鈕的處理邏輯
+        const collectionName = text.substring(text.indexOf(' ')).trim();
         if (collections[collectionName]) {
             p.parentElement.style.cursor = 'pointer';
             p.parentElement.addEventListener('click', (e) => {
@@ -240,7 +276,7 @@ function makeCollectionsClickable() {
 }
 
 
-// --- 顯示列表函式 ---
+// 顯示詩歌集列表函式
 function renderHymnList(collectionName) {
     const hymnsInCollection = collections[collectionName]; 
 
@@ -256,7 +292,6 @@ function renderHymnList(collectionName) {
     hymnList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
     
     if (hymnsInCollection) {
-        // --- 同步修正此處的規則 ---
         const hRegex = /(?<![a-zA-Z])H([0-9]{3})/;
         const hhRegex = /HH([0-9]{3})/;
 
@@ -304,7 +339,7 @@ function renderHymnList(collectionName) {
     });
 }
 
-// 顯示單首詩歌的完整內容
+// 顯示單首詩歌內容函式
 function renderHymnContent(hymn, collectionName) {
     mainControlsContainer.classList.remove('hidden');
     backToHomeBtn.classList.add('hidden');
@@ -338,7 +373,7 @@ function searchHymns(query) {
     });
 }
 
-// 函式：顯示搜尋結果
+// 顯示搜尋結果函式
 function displayResults(results) {
     resultsDiv.innerHTML = '';
 
