@@ -7,7 +7,7 @@ let collections = {}; // 用於按詩歌集分組數據
 const searchInput = document.getElementById('searchInput');
 const resultsDiv = document.getElementById('results');
 const hymnCollectionsDiv = document.getElementById('hymn-collections');
-const mainControlsContainer = document.getElementById('main-controls-container'); 
+const mainControlsContainer = document.getElementById('main-controls-container');
 const backToHomeBtn = document.getElementById('back-to-home-btn');
 
 
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         savedSize = oldToNewSizeMap[savedSize];
     }
     
-    const defaultSize = 'font-size-3'; 
+    const defaultSize = 'font-size-3';
     let initialIndex = fontSizes.indexOf(savedSize);
     if (initialIndex === -1) {
         initialIndex = fontSizes.indexOf(defaultSize);
@@ -99,23 +99,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 
-// 函式：顯示初始提示訊息 (已更新為可收合版本)
+// 函式：顯示初始提示訊息
 function displayInitialMessage(showUI = true) {
     resultsDiv.innerHTML = `
         <div class="text-center text-gray-500 pt-8 px-4 font-size-message">
-            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
+             <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
                 使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
             </div>
-            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4">
-                <p><strong>- 關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
-                <p><strong>- 詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
-                <p><strong>- 語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
-                <p><strong>- 調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
+            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
+                <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
+                <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
+                <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
+                <p><strong>調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
             </div>
         </div>
     `;
 
-    // 為新的收合元素加上事件監聽
     const toggle = document.getElementById('instruction-toggle');
     const details = document.getElementById('instruction-details');
     const arrow = document.getElementById('instruction-arrow');
@@ -154,6 +153,63 @@ fetch('hymns.json')
             return acc;
         }, {});
 
+        // --- 建立 H 和 HH 合訂本 ---
+        const hCollection = [];
+        // --- 再次修正：更新 H 合訂本的篩選規則，排除 KHxxx 等情況 ---
+        const hRegex = /(?<![a-zA-Z])H([0-9]{3})/; // 要求 H 前面不能是任何英文字母
+
+        hymns.forEach(hymn => {
+            if (hymn.title) {
+                const match = hymn.title.match(hRegex);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num >= 1 && num <= 335) {
+                        hCollection.push(hymn);
+                    }
+                }
+            }
+        });
+        
+        const hhCollection = [];
+        const hhRegex = /HH([0-9]{3})/;
+        
+        hymns.forEach(hymn => {
+            if (hymn.title) {
+                const match = hymn.title.match(hhRegex);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num >= 1 && num <= 199) {
+                        hhCollection.push(hymn);
+                    }
+                }
+            }
+        });
+        
+        if (hCollection.length > 0) {
+            // --- 同步修正排序用的規則 ---
+            const hRegexSort = /(?<![a-zA-Z])H([0-9]{3})/;
+            hCollection.sort((a, b) => {
+                const matchA = a.title.match(hRegexSort);
+                const matchB = b.title.match(hRegexSort);
+                const numA = matchA ? parseInt(matchA[1], 10) : 9999;
+                const numB = matchB ? parseInt(matchB[1], 10) : 9999;
+                return numA - numB;
+            });
+            collections['神家詩歌合訂本(1)'] = hCollection;
+        }
+
+        if (hhCollection.length > 0) {
+            const hhRegexSort = /HH([0-9]{3})/;
+            hhCollection.sort((a, b) => {
+                const matchA = a.title.match(hhRegexSort);
+                const matchB = b.title.match(hhRegexSort);
+                const numA = matchA ? parseInt(matchA[1], 10) : 9999;
+                const numB = matchB ? parseInt(matchB[1], 10) : 9999;
+                return numA - numB;
+            });
+            collections['神家詩歌合訂本(2)'] = hhCollection;
+        }
+
         displayInitialMessage();
         makeCollectionsClickable();
     })
@@ -168,13 +224,13 @@ fetch('hymns.json')
 
 // 讓詩歌集列表可以被點擊的函式
 function makeCollectionsClickable() {
-    const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p'); // More specific selector
+    const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p');
     collectionElements.forEach(p => {
         const text = p.textContent.trim();
         const collectionName = text.substring(text.indexOf(' ')).trim();
 
         if (collections[collectionName]) {
-            p.parentElement.style.cursor = 'pointer'; // Make the whole card clickable
+            p.parentElement.style.cursor = 'pointer';
             p.parentElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 renderHymnList(collectionName);
@@ -183,7 +239,8 @@ function makeCollectionsClickable() {
     });
 }
 
-// 顯示特定詩歌集內的詩歌列表
+
+// --- 顯示列表函式 ---
 function renderHymnList(collectionName) {
     const hymnsInCollection = collections[collectionName]; 
 
@@ -199,10 +256,43 @@ function renderHymnList(collectionName) {
     hymnList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
     
     if (hymnsInCollection) {
+        // --- 同步修正此處的規則 ---
+        const hRegex = /(?<![a-zA-Z])H([0-9]{3})/;
+        const hhRegex = /HH([0-9]{3})/;
+
         hymnsInCollection.forEach(hymn => {
             const hymnLink = document.createElement('div');
             hymnLink.className = 'p-3 border rounded-md cursor-pointer hover:bg-gray-200 transition-colors font-size-ui dark:border-gray-700 dark:hover:bg-gray-800';
-            hymnLink.textContent = `${hymn.code} - ${hymn.title}`;
+            
+            let displayText = '';
+            const isHCollection = collectionName === '神家詩歌合訂本(1)';
+            const isHHCollection = collectionName === '神家詩歌合訂本(2)';
+
+            if (isHCollection) {
+                const match = hymn.title.match(hRegex);
+                if (match) {
+                    const compilationCode = match[0];
+                    const mainTitleEnd = hymn.title.indexOf('(');
+                    const mainTitle = mainTitleEnd !== -1 ? hymn.title.substring(0, mainTitleEnd).trim() : hymn.title.trim();
+                    displayText = `${compilationCode} - ${mainTitle} (${hymn.code})`;
+                } else {
+                    displayText = `${hymn.code} - ${hymn.title}`;
+                }
+            } else if (isHHCollection) {
+                const match = hymn.title.match(hhRegex);
+                if (match) {
+                    const compilationCode = match[0];
+                    const mainTitleEnd = hymn.title.indexOf('(');
+                    const mainTitle = mainTitleEnd !== -1 ? hymn.title.substring(0, mainTitleEnd).trim() : hymn.title.trim();
+                    displayText = `${compilationCode} - ${mainTitle} (${hymn.code})`;
+                } else {
+                    displayText = `${hymn.code} - ${hymn.title}`;
+                }
+            } else {
+                displayText = `${hymn.code} - ${hymn.title}`;
+            }
+
+            hymnLink.textContent = displayText;
             hymnLink.addEventListener('click', () => renderHymnContent(hymn, collectionName));
             hymnList.appendChild(hymnLink);
         });
@@ -279,7 +369,7 @@ function displayResults(results) {
     });
 }
 
-// *** NEW: Debounce function for performance improvement ***
+// Debounce function
 function debounce(func, delay) {
     let timeoutId;
     return function(...args) {
@@ -290,18 +380,16 @@ function debounce(func, delay) {
     };
 }
 
-// The actual search logic that will be debounced
 const handleSearch = (query) => {
     if (query === '') {
         displayInitialMessage(true);
         return;
     }
     
-    // *** NEW: Only search numbers if length is 4 or more ***
     const isNumeric = /^\d+$/.test(query);
     if (isNumeric && query.length < 4) {
-        resultsDiv.innerHTML = ''; // Clear results while typing short numbers
-        return; // Stop here and don't search
+        resultsDiv.innerHTML = '';
+        return;
     }
 
     hymnCollectionsDiv.classList.add('hidden');
@@ -309,34 +397,32 @@ const handleSearch = (query) => {
     displayResults(results);
 };
 
-// Create a debounced version of the search handler
-const debouncedSearchHandler = debounce(handleSearch, 300); // 300ms delay
+const debouncedSearchHandler = debounce(handleSearch, 300);
 
-// Listen for input events and call the debounced handler
 searchInput.addEventListener('input', (e) => {
     debouncedSearchHandler(e.target.value.trim());
 });
 
 
-// --- 語音辨識功能 (全新版本) ---
+// --- 語音辨識功能 ---
 const voiceSearchBtn = document.getElementById('voiceSearchBtn');
 const voiceMicIcon = document.getElementById('voice-mic-icon');
 const voiceStopIcon = document.getElementById('voice-stop-icon');
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-let isRecognizing = false; // 追蹤辨識狀態
+let isRecognizing = false;
 
 if (SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.lang = 'zh-TW';
-    recognition.continuous = true; 
+    recognition.continuous = true;
     recognition.interimResults = true;
 
     voiceSearchBtn.addEventListener('click', () => {
         if (isRecognizing) {
             recognition.stop();
         } else {
-            searchInput.value = ''; 
+            searchInput.value = '';
             recognition.start();
         }
     });
