@@ -229,7 +229,7 @@ fetch('hymns.json')
         console.error("Fetch Error:", error);
     });
 
-// --- 新增：顯示 "甜跪＆歡呼" 內容的函式 ---
+// 顯示 "甜跪＆歡呼" 內容的函式
 function renderSpecialContent() {
     mainControlsContainer.classList.add('hidden');
     hymnCollectionsDiv.classList.add('hidden');
@@ -247,23 +247,21 @@ function renderSpecialContent() {
     });
 }
 
-// --- 修改：讓詩歌集列表（包含新的按鈕）可以被點擊 ---
+// 讓詩歌集列表（包含新的按鈕）可以被點擊
 function makeCollectionsClickable() {
     const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p');
     collectionElements.forEach(p => {
         const text = p.textContent.trim();
 
-        // 特別處理 "甜跪＆歡呼" 按鈕
         if (text === '甜跪＆歡呼') {
             p.parentElement.style.cursor = 'pointer';
             p.parentElement.addEventListener('click', (e) => {
                 e.preventDefault();
                 renderSpecialContent();
             });
-            return; // 處理完畢，跳到下一個按鈕
+            return;
         }
 
-        // 其他詩歌集按鈕的處理邏輯
         const collectionName = text.substring(text.indexOf(' ')).trim();
         if (collections[collectionName]) {
             p.parentElement.style.cursor = 'pointer';
@@ -276,7 +274,7 @@ function makeCollectionsClickable() {
 }
 
 
-// 顯示詩歌集列表函式
+// 顯示列表函式
 function renderHymnList(collectionName) {
     const hymnsInCollection = collections[collectionName]; 
 
@@ -358,7 +356,10 @@ function renderHymnContent(hymn, collectionName) {
     });
 }
 
-// 搜尋函式
+
+// =======================================================================
+// --- 修改部分：優化搜尋功能 ---
+// =======================================================================
 function searchHymns(query) {
     const lowerCaseQuery = query.toLowerCase().trim();
     if (!hymns || hymns.length === 0 || lowerCaseQuery === '') return [];
@@ -368,12 +369,14 @@ function searchHymns(query) {
 
         const code = hymn.code ? String(hymn.code).toLowerCase() : '';
         const title = hymn.title ? hymn.title.toLowerCase() : '';
-        const content = hymn.content ? hymn.content.toLowerCase() : '';
+        // 在比對前，先用 .replace(/\^/g, '') 移除 content 中的 "^" 符號
+        const content = hymn.content ? hymn.content.toLowerCase().replace(/\^/g, '') : '';
+        
         return code.includes(lowerCaseQuery) || title.includes(lowerCaseQuery) || content.includes(lowerCaseQuery);
     });
 }
 
-// 顯示搜尋結果函式
+// 函式：顯示搜尋結果
 function displayResults(results) {
     resultsDiv.innerHTML = '';
 
