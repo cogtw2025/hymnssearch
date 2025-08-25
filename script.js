@@ -247,22 +247,24 @@ function makeCollectionsClickable() {
     });
 }
 
+// 在 script.js 中找到舊的 renderHymnList 函式，並用這段新的程式碼完整取代它
+
 function renderHymnList(collectionName) {
     const hymnsInCollection = collections[collectionName]; 
 
     mainControlsContainer.classList.add('hidden');
     hymnCollectionsDiv.classList.add('hidden');
     
-    // --- 新增：判斷返回按鈕的目的地 ---
     const isWonderCategory = breakingBreadCategories.some(c => c.title === collectionName);
     const backButtonHTML = isWonderCategory
         ? `<button id="backToWonders" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors w-full mb-4">← 返回擘餅詩歌分類</button>`
         : `<button id="backToCollections" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors w-full mb-4">← 返回詩歌集列表</button>`;
 
-    resultsDiv.innerHTML = `${backButtonHTML}<h2 class="text-xl font-bold text-center mb-4">${collectionName}</h2>`;
+    resultsDiv.innerHTML = `${backButtonHTML}<h2 class="text-xl font-bold text-center mb-4 font-size-title">${collectionName}</h2>`;
 
     const hymnList = document.createElement('div');
-    hymnList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2';
+    // 【修改一】在這裡加上 'font-size-ui'，讓整個列表容器可以縮放
+    hymnList.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2 font-size-ui';
     
     if (hymnsInCollection) {
         const hRegex = /(?<![a-zA-Z])H([0-9]{3})/;
@@ -270,7 +272,8 @@ function renderHymnList(collectionName) {
 
         hymnsInCollection.forEach(hymn => {
             const hymnLink = document.createElement('div');
-            hymnLink.className = 'p-3 border rounded-md cursor-pointer hover:bg-gray-200 transition-colors font-size-ui dark:border-gray-700 dark:hover:bg-gray-800';
+            // 【修改二】從這裡移除 'font-size-ui'，讓項目繼承父容器的大小
+            hymnLink.className = 'p-3 border rounded-md cursor-pointer hover:bg-gray-200 transition-colors dark:border-gray-700 dark:hover:bg-gray-800';
             let displayText = `${hymn.code} - ${hymn.title}`;
 
             const isHCollection = collectionName === '神家詩歌合訂本(1)';
