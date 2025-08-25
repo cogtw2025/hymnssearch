@@ -157,3 +157,61 @@ span, p {
     text-align: center;
     margin-top: 0.25rem;
 }
+/* --- 搜尋結果高亮樣式 --- */
+.highlight {
+    background-color: #fffb00; /* 亮黃色背景 */
+    color: #000000;          /* 確保文字是黑色，方便閱讀 */
+    font-weight: bold;        /* 讓高亮文字加粗 */
+    padding: 1px 2px;
+    border-radius: 3px;
+}
+
+/* 深色模式下的高亮樣式 */
+.dark .highlight {
+    background-color: #a0821b; /* 較深的黃色 */
+    color: #ffffff;          /* 文字為白色 */
+}
+
+/* --- 新增：當前高亮項目的特殊樣式 --- */
+.highlight.active {
+    background-color: #ff9900; /* 醒目的橘色 */
+    color: white;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 8px rgba(255,153,0,0.8); /* 增加光暈效果 */
+}
+
+/* 深色模式下的當前高亮樣式 */
+.dark .highlight.active {
+    background-color: #f59e0b; /* A brighter orange for dark mode */
+    color: #1f2937;
+}
+
+/* --- 關鍵字導覽列 (最終修正版：使用 sticky 吸頂效果) --- */
+#highlight-nav {
+    /* 使用 sticky 定位，讓它在滾動到頂部時黏住 */
+    position: sticky;
+    /* 當它黏住時，距離視窗頂部 10px */
+    top: 10px;
+    
+    /* 確保它在最上層，不會被其他內容遮擋 */
+    z-index: 50; 
+    
+    /* 以下是外觀樣式，保持不變 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background-color: var(--content-bg-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    /* 增加一個過渡效果，讓吸頂的過程更平滑 */
+    transition: box-shadow 0.3s ease;
+}
+
+/* 這個規則依然需要，確保導覽列在不需要時能被 JS 徹底隱藏 */
+#highlight-nav.hidden {
+    display: none;
+}
