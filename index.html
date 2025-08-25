@@ -17,15 +17,16 @@
     <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
         <div class="relative text-center mb-2">
             <h1 class="font-bold font-size-title">神家詩歌搜尋</h1>
-           
-            <span class="absolute right-0 bottom-0 text-xs text-gray-400 pb-1">台北市神的教會製作</span>
-             
+            <div class="text-center">
+                <p class="text-gray-500 italic text-sm mt-2 font-size-ui">
+                「我要一生向耶和華唱詩！我還活的時候，要向我神歌頌！」 — 詩篇 104:33
+                </p>
+            </div>
         </div>
 
         <div class="my-4">
              <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden w-full sm:w-auto">← 返回首頁</button>
-            
-            </div>
+        </div>
 
         <div id="main-controls-container" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4">
             <div class="flex-grow flex items-center relative">
@@ -60,11 +61,6 @@
             </div>
         </div>
         
-        <div class="text-center">
-            <p class="text-gray-500 italic text-sm mt-2 font-size-ui">
-            「我要一生向耶和華唱詩！我還活的時候，要向我神歌頌！」 — 詩篇 104:33
-            </p>
-        </div>
         <div id="results" class="space-y-4 mt-4"></div>
 
         <div id="hymn-collections" class="mt-6 pt-4 border-t">
@@ -72,8 +68,6 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-size-ui">
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H0000 神家詩歌合訂本(1)</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>HH000 神家詩歌合訂本(2)</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>甜跪＆歡呼</p></div>
-
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0000 愛的迴響</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>01000 神家詩歌第一集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0200 神家詩歌第二集</p></div>
@@ -98,13 +92,14 @@
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2100 神家詩歌第二十一集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2200 神家詩歌第二十二集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2300 神家詩歌第二十三集</p></div>
-                            
+                <div id="breaking-bread-btn" class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>精選擘餅詩歌</p></div>
+                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>甜跪＆歡呼</p></div>
 
             </div>
         </div>
 
-     <div> <footer class="mt-4 text-center text-xs text-gray-500 pb-4">
-        <p>© <span id="copyright-year"></span> 台北市神的教會製作. All Rights Reserved. 版權所有.</p>
+    <div> <footer class="mt-4 text-center text-xs text-gray-500 pb-4">
+        <p>© <span id="copyright-year"></span> 台灣神的教會製作. All Rights Reserved. 版權所有.</p>
     </footer>
     <script src="script.js"></script>
     
