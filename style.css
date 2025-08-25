@@ -1,4 +1,4 @@
-/* --- 全新 CSS 樣式檔案 --- */
+/* --- 全新 CSS 樣式檔案 (改善間距與結構) --- */
 :root {
     /* 淺色模式的顏色變數 */
     --bg-color: #f3f4f6; /* 頁面背景 */
@@ -13,7 +13,7 @@
 
 .dark {
     /* 深色模式的顏色變數 */
-    --bg-color: #000000; /* 改為純黑色背景 */
+    --bg-color: #000000; /* 純黑色背景 */
     --content-bg-color: #121212; /* 內容區塊使用深灰色 */
     --text-color: #d1d5db;
     --text-secondary-color: #9ca3af;
@@ -27,7 +27,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    font-family: 'Noto Sans TC', sans-serif; /* 使用 Noto Sans TC 字體 */
+    font-family: 'Noto Sans TC', sans-serif;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -35,7 +35,6 @@ body {
 #main-content {
     background-color: var(--content-bg-color);
     width: 100%;
-    /* max-width: 48rem;  <-- 已移除此行，讓內容滿版 */
     transition: background-color 0.3s;
 }
 
@@ -65,25 +64,63 @@ input[type="text"] {
 h1, h2, h3 {
     color: var(--text-color);
 }
+
 span, p {
     color: var(--text-secondary-color);
 }
-#results h2, #results .text-blue-600 { /* 搜尋結果的標題顏色 */
+
+#results h2, #results .text-blue-600 {
      color: var(--accent-color);
 }
-#results pre { /* 詩歌內文顏色 */
+
+#results pre {
      color: var(--text-color);
 }
+
 #hymn-collections, #results .border-b {
     border-color: var(--border-color);
 }
 
-/* 詩歌集列表項目互動效果 */
 #hymn-collections p {
-    transition: color 0.2s; /* 增加顏色變化的過渡效果 */
+    transition: color 0.2s;
 }
 
-/* 動畫：搜尋結果淡入效果 */
+/* --- 字體大小與間距優化 --- */
+
+/* 1. 設定每個字體級別的基礎大小 */
+#main-content.font-size-1 { font-size: 12px; }
+#main-content.font-size-2 { font-size: 14px; }
+#main-content.font-size-3 { font-size: 16px; } /* 預設大小 */
+#main-content.font-size-4 { font-size: 20px; }
+#main-content.font-size-5 { font-size: 24px; }
+#main-content.font-size-6 { font-size: 32px; }
+
+/* 2. 讓不同元素的字體大小、行高、字距 相對於基礎大小進行縮放 */
+.font-size-title {
+    font-size: 1.25em; /* 相對大小 */
+    line-height: 1.4;  /* 使用相對行高，會自動縮放 */
+    letter-spacing: 0.025em; /* 增加一點字距，避免擠在一起 */
+}
+
+.font-size-content {
+    font-size: 1em;
+    line-height: 1.7; /* 內容需要較大的行高以利閱讀 */
+    letter-spacing: 0.01em;
+}
+
+.font-size-ui {
+    font-size: 0.875em;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.font-size-message {
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+/* --- 動畫與其他樣式 --- */
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -93,38 +130,6 @@ span, p {
     animation: fadeIn 0.5s ease-out forwards;
 }
 
-/* 字體大小的級距 (六種大小) */
-#main-content.font-size-1 .font-size-title { font-size: 0.875rem; }
-#main-content.font-size-1 .font-size-content { font-size: 0.75rem; line-height: 1.5; }
-#main-content.font-size-1 .font-size-ui { font-size: 0.625rem; }
-#main-content.font-size-1 .font-size-message { font-size: 0.75rem; }
-
-#main-content.font-size-2 .font-size-title { font-size: 1rem; }
-#main-content.font-size-2 .font-size-content { font-size: 0.875rem; line-height: 1.5; }
-#main-content.font-size-2 .font-size-ui { font-size: 0.75rem; }
-#main-content.font-size-2 .font-size-message { font-size: 0.875rem; }
-
-#main-content.font-size-3 .font-size-title { font-size: 1.125rem; }
-#main-content.font-size-3 .font-size-content { font-size: 1rem; line-height: 1.6; }
-#main-content.font-size-3 .font-size-ui { font-size: 0.875rem; }
-#main-content.font-size-3 .font-size-message { font-size: 1rem; }
-
-#main-content.font-size-4 .font-size-title { font-size: 1.5rem; }
-#main-content.font-size-4 .font-size-content { font-size: 1.25rem; line-height: 1.6; }
-#main-content.font-size-4 .font-size-ui { font-size: 1rem; }
-#main-content.font-size-4 .font-size-message { font-size: 1.25rem; }
-
-#main-content.font-size-5 .font-size-title { font-size: 2.0rem; }
-#main-content.font-size-5 .font-size-content { font-size: 1.5rem; line-height: 1.7; }
-#main-content.font-size-5 .font-size-ui { font-size: 1.25rem; }
-#main-content.font-size-5 .font-size-message { font-size: 1.5rem; }
-
-#main-content.font-size-6 .font-size-title { font-size: 2.5rem; }
-#main-content.font-size-6 .font-size-content { font-size: 2.0rem; line-height: 1.7; }
-#main-content.font-size-6 .font-size-ui { font-size: 1.5rem; }
-#main-content.font-size-6 .font-size-message { font-size: 1.75rem; }
-
-/* 禁用按鈕的樣式 */
 .font-button:disabled {
     background-color: #e5e7eb;
     color: #9ca3af;
@@ -139,12 +144,12 @@ span, p {
 }
 
 .relative.text-center.mb-2 h1 {
-    margin-bottom: 0.5rem; /* 稍微縮小主標題的下邊距 */
+    margin-bottom: 0.5rem;
 }
 
 .relative.text-center.mb-2 span.absolute {
-    position: static; /* 在小螢幕上取消絕對定位 */
-    display: block; /* 使其佔據一行 */
-    text-align: center; /* 文字置中 */
-    margin-top: 0.25rem; /* 增加頂部外邊距，與主標題分開 */
+    position: static;
+    display: block;
+    text-align: center;
+    margin-top: 0.25rem;
 }
