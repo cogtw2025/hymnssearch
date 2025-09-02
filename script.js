@@ -1,6 +1,12 @@
+// --- 【請務必修改此處】 ---
+// 請將您從 Google 表單「預先填入的連結」取得的新資訊，填入以下對應的引號中
+const GOOGLE_FORM_ID = "1FAIpQLSe5vnzsg-1_f1J7f2vftca-dB6xetKor7n-kD6bUHRwNzjL4g";
+const TOPIC_ENTRY_ID = "entry.1026166853";
+const DESCRIPTION_ENTRY_ID = "entry.662465907";
 
 
-const GOOGLE_SHEET_ISSUES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgWtgZN3S2LK66Z0yLle18Dw11w1ZBgTklb_DLZyNbanPZakZKfDKuS5N30beqCO0whSdvGVyemsRD/pubhtml?gid=191379548&single=true";
+
+// --- 神家詩歌搜尋 script.js 最終完整版 ---
 
 let hymns = [];
 let collections = {};
@@ -8,6 +14,145 @@ let collections = {};
 // 全域變數，用於高亮導覽
 let highlightedMatches = [];
 let currentMatchIndex = -1;
+
+
+
+/**
+ * 頁面載入完成後執行的初始化函式
+ */
+document.addEventListener('DOMContentLoaded', () => {
+    // 判斷目前在哪個頁面
+    if (document.getElementById('hymn-collections')) {
+        // 這是在主頁 (index.html)
+        initializeMainPage();
+    } else if (document.getElementById('report-form')) {
+        // 這是在回報頁 (report.html)
+        initializeReportPage();
+    }
+});
+
+/**
+ * 初始化主頁 (index.html) 的所有功能
+ */
+function initializeMainPage() {
+    const mainContent = document.getElementById('main-content');
+    const decreaseBtn = document.getElementById('decrease-font');
+    const increaseBtn = document.getElementById('increase-font');
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    
+    // 初始化主題和字體大小
+    setupTheme(themeToggleBtn);
+    setupFontSize(mainContent, decreaseBtn, increaseBtn);
+    
+    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    backToHomeBtn.addEventListener('click', () => {
+        document.getElementById('searchInput').value = '';
+        displayInitialMessage(true);
+    });
+
+    // 設定版權年份
+    const yearSpan = document.getElementById('copyright-year');
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
+    
+    // 載入詩歌資料
+    fetchHymnsData();
+}
+
+/**
+ * 初始化回報頁 (report.html) 的功能
+ */
+function initializeReportPage() {
+    const reportForm = document.getElementById('report-form');
+    const successMessage = document.getElementById('form-success-message');
+    const submitBtn = document.getElementById('submit-report-btn');
+
+    reportForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (GOOGLE_FORM_ID === "請貼上您的表單ID") {
+            alert("錯誤：開發者尚未設定 Google 表單 ID。");
+            return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = '傳送中...';
+        
+        // 收集所有被勾選的核取方塊的值
+        const topicCheckboxes = document.querySelectorAll('input[name="problem-topic"]:checked');
+        const selectedTopics = Array.from(topicCheckboxes).map(cb => cb.value);
+        const topicString = selectedTopics.join(', '); // 將多個選項合併成一個字串
+
+        const formData = new FormData();
+        formData.append(TOPIC_ENTRY_ID, topicString);
+        formData.append(DESCRIPTION_ENTRY_ID, document.getElementById('problem-description').value);
+        
+        const googleFormUrl = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
+
+        fetch(googleFormUrl, {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            mode: 'no-cors'
+        }).then(() => {
+            reportForm.style.display = 'none';
+            successMessage.style.display = 'block';
+        }).catch(error => {
+            console.error('Error:', error);
+            alert('傳送失敗，請稍後再試。');
+            submitBtn.disabled = false;
+            submitBtn.textContent = '送出回報';
+        });
+    });
+}
+
+
+/**
+ * 顯示首頁教學訊息 (已加入問題回報按鈕)
+ */
+function displayInitialMessage(showUI = true) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = `
+        <div class="text-center pt-4 mb-4">
+            <a href="report.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
+                詩歌問題回報
+            </a>
+        </div>
+
+        <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
+            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
+                使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
+            </div>
+            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
+                <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
+                <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
+                <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
+                <p><strong>調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
+            </div>
+        </div>
+    `;
+
+    // 為收合元素加上事件監聽
+    const toggle = document.getElementById('instruction-toggle');
+    const details = document.getElementById('instruction-details');
+    const arrow = document.getElementById('instruction-arrow');
+
+    toggle.addEventListener('click', () => {
+        details.classList.toggle('hidden');
+        arrow.style.transform = details.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+    
+    const backToHomeBtn = document.getElementById('back-to-home-btn');
+    backToHomeBtn.classList.add('hidden');
+    
+    const mainControlsContainer = document.getElementById('main-controls-container');
+    const hymnCollectionsDiv = document.getElementById('hymn-collections');
+
+    if (showUI) {
+        mainControlsContainer.classList.remove('hidden');
+        hymnCollectionsDiv.classList.remove('hidden');
+    }
+}
+
 
 // --- 擘餅詩歌分類資料 ---
 const breakingBreadCategories = [
@@ -445,43 +590,4 @@ if (SpeechRecognition) {
 } else { if(voiceSearchBtn) voiceSearchBtn.style.display = 'none'; console.warn('您的瀏覽器不支援 Web Speech API'); }
 
 
-function displayInitialMessage(showUI = true) {
-    resultsDiv.innerHTML = `
-        <!-- 【新增的問題回報按鈕】 -->
-        <div class="text-center pt-4 mb-4">
-            <a href="report.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
-                詩歌問題回報
-            </a>
-        </div>
-
-        <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
-            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
-                使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
-            </div>
-            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
-                <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
-                <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
-                <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
-                <p><strong>調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
-            </div>
-        </div>
-    `;
-
-    // 為收合元素加上事件監聽
-    const toggle = document.getElementById('instruction-toggle');
-    const details = document.getElementById('instruction-details');
-    const arrow = document.getElementById('instruction-arrow');
-
-    toggle.addEventListener('click', () => {
-        const isHidden = details.classList.toggle('hidden');
-        arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
-    });
-
-
-    backToHomeBtn.classList.add('hidden');
-
-    if (showUI) {
-        mainControlsContainer.classList.remove('hidden');
-        hymnCollectionsDiv.classList.remove('hidden');
-    }
-}
+f

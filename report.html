@@ -11,18 +11,40 @@
     <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
         <div class="text-center mb-6">
             <h1 class="text-2xl font-bold font-size-title">詩歌問題回報</h1>
-            <p class="text-sm text-gray-500 mt-2 font-size-ui">感謝您的回饋，您的建議是我們進步的動力。</p>
+            <p class="text-sm text-gray-500 mt-2 font-size-ui">感謝您的回饋，我們一同為主作工</p>
         </div>
 
         <!-- 自訂設計的表單 -->
         <form id="report-form">
-            <div class="mb-4">
-                <label for="problem-hymn-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">相關詩歌編號 (選填)</label>
-                <input type="text" id="problem-hymn-id" name="problem-hymn-id" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="例如：H001 或 0201">
+            <!-- 【修改】將下拉選單改為核取方塊 -->
+            <div class="mb-5">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">留言主題</label>
+                <div id="problem-topic-group" class="grid grid-cols-2 gap-x-4 gap-y-2">
+                    <label class="flex items-center space-x-2 text-gray-800 dark:text-gray-200">
+                        <input type="radio" name="problem-topic" value="內容錯誤" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span>內容錯誤</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-gray-800 dark:text-gray-200">
+                        <input type="radio" name="problem-topic" value="操作問題" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span>操作問題</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-gray-800 dark:text-gray-200">
+                        <input type="radio" name="problem-topic" value="功能建議" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span>功能建議</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-gray-800 dark:text-gray-200">
+                        <input type="radio" name="problem-topic" value="給我們鼓勵" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span>給我們鼓勵</span>
+                    </label>
+                    <label class="flex items-center space-x-2 text-gray-800 dark:text-gray-200">
+                        <input type="radio" name="problem-topic" value="其他" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <span>其他</span>
+                    </label>
+                </div>
             </div>
             <div class="mb-4">
-                <label for="problem-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">問題詳細說明 (必填)</label>
-                <textarea id="problem-description" name="problem-description" rows="6" required class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="請盡量詳細描述您遇到的問題..."></textarea>
+                <label for="problem-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">留言內容 (必填)</label>
+                <textarea id="problem-description" name="problem-description" rows="6" required class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="請盡量詳細描述..."></textarea>
             </div>
             <div class="flex justify-between items-center">
                 <a href="index.html" class="text-sm text-gray-600 hover:underline">← 返回主頁</a>
