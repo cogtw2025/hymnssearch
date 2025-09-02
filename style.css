@@ -215,3 +215,42 @@ span, p {
 #highlight-nav.hidden {
     display: none;
 }
+
+/* ... (省略了與之前版本相同的 CSS) ... */
+
+/* --- 新增：iframe 容器樣式 --- */
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 75%; /* 4:3 的長寬比，您可以根據需要調整 */
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ... (省略了與之前版本相同的 CSS) ... */
+
+/* --- 新增：問題回報 Modal 樣式 --- */
+#report-modal {
+    display: none; /* 預設隱藏，由 JS 控制 */
+    transition: opacity 0.3s ease;
+}
+
+#report-modal.flex {
+    display: flex;
+}
+
+#modal-content {
+    animation: fadeIn 0.3s ease-out forwards;
+}

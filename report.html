@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>詩歌問題回報</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+    <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold font-size-title">詩歌問題回報</h1>
+            <p class="text-sm text-gray-500 mt-2 font-size-ui">感謝您的回饋，您的建議是我們進步的動力。</p>
+        </div>
+
+        <!-- 自訂設計的表單 -->
+        <form id="report-form">
+            <div class="mb-4">
+                <label for="problem-hymn-id" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">相關詩歌編號 (選填)</label>
+                <input type="text" id="problem-hymn-id" name="problem-hymn-id" class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="例如：H001 或 0201">
+            </div>
+            <div class="mb-4">
+                <label for="problem-description" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">問題詳細說明 (必填)</label>
+                <textarea id="problem-description" name="problem-description" rows="6" required class="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="請盡量詳細描述您遇到的問題..."></textarea>
+            </div>
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-sm text-gray-600 hover:underline">← 返回主頁</a>
+                <button type="submit" id="submit-report-btn" class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors">
+                    送出回報
+                </button>
+            </div>
+        </form>
+
+        <!-- 提交成功後的感謝訊息 -->
+        <div id="form-success-message" class="hidden text-center p-8 bg-green-50 text-green-800 rounded-md">
+            <p class="font-bold text-lg">感謝您的回報！</p>
+            <p class="mt-2">我們已收到您的訊息，會盡快處理。</p>
+            <a href="index.html" class="mt-6 inline-block bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors">
+                ← 返回主頁
+            </a>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
+

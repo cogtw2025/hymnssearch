@@ -1,4 +1,6 @@
-// --- 神家詩歌搜尋 script.js 最終完整版 ---
+
+
+const GOOGLE_SHEET_ISSUES_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSgWtgZN3S2LK66Z0yLle18Dw11w1ZBgTklb_DLZyNbanPZakZKfDKuS5N30beqCO0whSdvGVyemsRD/pubhtml?gid=191379548&single=true";
 
 let hymns = [];
 let collections = {};
@@ -441,3 +443,45 @@ if (SpeechRecognition) {
     recognition.onerror = (event) => { console.error('語音辨識錯誤:', event.error); isRecognizing = false; voiceMicIcon.classList.remove('hidden'); voiceStopIcon.classList.add('hidden'); };
     recognition.onresult = (event) => { let interimTranscript = '', finalTranscript = ''; for (let i = event.resultIndex; i < event.results.length; ++i) { if (event.results[i].isFinal) finalTranscript += event.results[i][0].transcript; else interimTranscript += event.results[i][0].transcript; } searchInput.value = finalTranscript + interimTranscript; searchInput.dispatchEvent(new Event('input', { bubbles: true })); };
 } else { if(voiceSearchBtn) voiceSearchBtn.style.display = 'none'; console.warn('您的瀏覽器不支援 Web Speech API'); }
+
+
+function displayInitialMessage(showUI = true) {
+    resultsDiv.innerHTML = `
+        <!-- 【新增的問題回報按鈕】 -->
+        <div class="text-center pt-4 mb-4">
+            <a href="report.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
+                詩歌問題回報
+            </a>
+        </div>
+
+        <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
+            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
+                使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
+            </div>
+            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
+                <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
+                <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
+                <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
+                <p><strong>調整字體大小：</strong> 點擊上方的 [+] 或 [-] 按鈕，即可放大或縮小頁面字體。</p>
+            </div>
+        </div>
+    `;
+
+    // 為收合元素加上事件監聽
+    const toggle = document.getElementById('instruction-toggle');
+    const details = document.getElementById('instruction-details');
+    const arrow = document.getElementById('instruction-arrow');
+
+    toggle.addEventListener('click', () => {
+        const isHidden = details.classList.toggle('hidden');
+        arrow.style.transform = isHidden ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+
+
+    backToHomeBtn.classList.add('hidden');
+
+    if (showUI) {
+        mainControlsContainer.classList.remove('hidden');
+        hymnCollectionsDiv.classList.remove('hidden');
+    }
+}
