@@ -2,20 +2,26 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
+  <!-- 【新增】確保在行動裝置上正確縮放 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>問題蒐集</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-6">
-  <div class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-6">
-    <h1 class="text-2xl font-bold text-center mb-4">問題蒐集</h1>
+<!-- 【修改】調整 body 的間距，在手機上邊距小一點 -->
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4 sm:p-6">
+  <!-- 【修改】調整內容區塊的間距 -->
+  <div class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-4 sm:p-6">
+    <h1 class="text-2xl font-bold text-center mb-2 sm:mb-4">問題蒐集</h1>
     <p class="text-gray-600 text-center mb-6">以下是大家回報的問題紀錄</p>
 
     <!-- 問題列表 -->
-    <div id="report-list" class="space-y-4"></div>
+    <div id="report-list" class="space-y-4">
+      <!-- 正在載入的提示訊息 -->
+      <p id="loading-message" class="text-center text-gray-500 py-8">正在載入紀錄...</p>
+    </div>
 
     <div class="mt-6 text-center">
       <a href="index.html" class="text-sm text-gray-600 hover:underline">← 返回主頁</a>
-      </a>
     </div>
   </div>
 
@@ -23,27 +29,39 @@
     const API_URL = "https://script.google.com/macros/s/AKfycbzpemYNQtlBwmjb9ZJihNkCWW2k-2yZY8DTBX4umCtYwL1b2_6Oh-Dx6WWamoGKgJ6Q/exec"; // 你的 Apps Script 部署網址
 
     async function loadReports() {
+      const list = document.getElementById("report-list");
+      const loadingMessage = document.getElementById("loading-message");
+
       try {
         const res = await fetch(API_URL);
         const data = await res.json();
         
-        const list = document.getElementById("report-list");
+        // 清空載入提示
         list.innerHTML = "";
+
+        if (data.length === 0) {
+          list.innerHTML = `<p class="text-center text-gray-500 py-8">目前還沒有任何問題回報。</p>`;
+          return;
+        }
 
         data.reverse().forEach(item => {
           const card = document.createElement("div");
-          card.className = "p-4 border rounded-lg bg-gray-50";
+          card.className = "p-4 border rounded-lg bg-gray-50 shadow-sm";
 
+          // **【修改】** 使用 flexbox 讓排版在手機上更靈活
           card.innerHTML = `
-            <p class="text-sm text-gray-500 mb-1">📅 ${item["時間戳記"] || ""}</p>
-            <p class="font-bold text-lg">📝 ${item["留言主題"] || "未填"}</p>
-            <p class="text-gray-700 mt-2">${item["留言內容"] || ""}</p>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+              <p class="font-bold text-lg text-blue-700">📝 ${item["留言主題"] || "未填"}</p>
+              <p class="text-xs text-gray-500 mt-1 sm:mt-0">📅 ${item["時間戳記"] || ""}</p>
+            </div>
+            <p class="text-gray-800 mt-2 whitespace-pre-wrap">${item["留言內容"] || ""}</p>
           `;
 
           list.appendChild(card);
         });
       } catch (err) {
         console.error("載入失敗", err);
+        list.innerHTML = `<p class="text-center text-red-500 py-8">無法載入紀錄，請稍後再試。</p>`;
       }
     }
 
