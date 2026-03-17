@@ -1,0 +1,256 @@
+/* --- 全新 CSS 樣式檔案 (改善間距與結構) --- */
+:root {
+    /* 淺色模式的顏色變數 */
+    --bg-color: #f3f4f6; /* 頁面背景 */
+    --content-bg-color: #ffffff; /* 內容區塊背景 */
+    --text-color: #1f2937; /* 主要文字顏色 */
+    --text-secondary-color: #4b5563; /* 次要文字顏色 */
+    --border-color: #e5e7eb; /* 邊框顏色 */
+    --hover-bg-color: #f3f4f6; /* 滑鼠懸停背景色 */
+    --accent-color: #3b82f6; /* 主題色 (藍色) */
+    --accent-text-color: #ffffff; /* 主題色上的文字 (白色) */
+}
+
+.dark {
+    /* 深色模式的顏色變數 */
+    --bg-color: #000000; /* 純黑色背景 */
+    --content-bg-color: #121212; /* 內容區塊使用深灰色 */
+    --text-color: #d1d5db;
+    --text-secondary-color: #9ca3af;
+    --border-color: #27272a; /* 調整邊框顏色以搭配黑色 */
+    --hover-bg-color: #27272a; /* 調整懸停顏色以搭配黑色 */
+    --accent-color: #60a5fa;
+    --accent-text-color: #111827;
+}
+
+/* 基礎設定 */
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* 主內容區塊 */
+#main-content {
+    background-color: var(--content-bg-color);
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+/* 搜尋框與按鈕 */
+input[type="text"] {
+    background-color: var(--bg-color);
+    border-color: var(--border-color);
+    color: var(--text-color);
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+.font-button, #back-to-home-btn, #theme-toggle, #voiceSearchBtn {
+    color: var(--text-secondary-color);
+    border-color: var(--border-color);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.font-button:hover, #back-to-home-btn:hover, #theme-toggle:hover, #voiceSearchBtn:hover {
+    background-color: var(--hover-bg-color);
+    color: var(--text-color);
+}
+
+#voiceSearchBtn:hover {
+    color: var(--accent-color);
+}
+
+h1, h2, h3 {
+    color: var(--text-color);
+}
+
+span, p {
+    color: var(--text-secondary-color);
+}
+
+#results h2, #results .text-blue-600 {
+     color: var(--accent-color);
+     font-size: 0.875em; /* 與 .font-size-ui 的大小一致 */
+     line-height: 1.5;
+     letter-spacing: 0.01em;
+}
+
+#results pre {
+     color: var(--text-color);
+}
+
+#hymn-collections, #results .border-b {
+    border-color: var(--border-color);
+}
+
+#hymn-collections p {
+    transition: color 0.2s;
+}
+
+/* --- 字體大小與間距優化 --- */
+
+/* 1. 設定每個字體級別的基礎大小 */
+#main-content.font-size-2 { font-size: 16px; } /* 預設大小 */
+#main-content.font-size-3 { font-size: 20px; }
+#main-content.font-size-4 { font-size: 24px; }
+#main-content.font-size-5 { font-size: 32px; }
+#main-content.font-size-6 { font-size: 40px; }
+
+
+
+/* 2. 讓不同元素的字體大小、行高、字距 相對於基礎大小進行縮放 */
+.font-size-title {
+    font-size: 1.25em; /* 相對大小 */
+    line-height: 1.4;  /* 使用相對行高，會自動縮放 */
+    letter-spacing: 0.025em; /* 增加一點字距，避免擠在一起 */
+}
+
+.font-size-content {
+    font-size: 1em;
+    line-height: 1.7; /* 內容需要較大的行高以利閱讀 */
+    letter-spacing: 0.01em;
+}
+
+.font-size-ui {
+    font-size: 0.875em;
+    line-height: 1.5;
+    letter-spacing: 0.01em;
+}
+
+.font-size-message {
+    font-size: 1em;
+    line-height: 1.6;
+}
+
+/* --- 動畫與其他樣式 --- */
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#results > * {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.font-button:disabled {
+    background-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+    border-color: #d1d5db;
+}
+
+.dark .font-button:disabled {
+     background-color: #374151;
+     color: #6b7280;
+     border-color: #4b5563;
+}
+
+.relative.text-center.mb-2 h1 {
+    margin-bottom: 0.5rem;
+}
+
+.relative.text-center.mb-2 span.absolute {
+    position: static;
+    display: block;
+    text-align: center;
+    margin-top: 0.25rem;
+}
+/* --- 搜尋結果高亮樣式 --- */
+.highlight {
+    background-color: #fffb00; /* 亮黃色背景 */
+    color: #000000;          /* 確保文字是黑色，方便閱讀 */
+    font-weight: bold;        /* 讓高亮文字加粗 */
+    padding: 1px 2px;
+    border-radius: 3px;
+}
+
+/* 深色模式下的高亮樣式 */
+.dark .highlight {
+    background-color: #a0821b; /* 較深的黃色 */
+    color: #ffffff;          /* 文字為白色 */
+}
+
+/* --- 新增：當前高亮項目的特殊樣式 --- */
+.highlight.active {
+    background-color: #ff9900; /* 醒目的橘色 */
+    color: white;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 0 8px rgba(255,153,0,0.8); /* 增加光暈效果 */
+}
+
+/* 深色模式下的當前高亮樣式 */
+.dark .highlight.active {
+    background-color: #f59e0b; /* A brighter orange for dark mode */
+    color: #1f2937;
+}
+
+/* --- 關鍵字導覽列 (最終修正版：使用 sticky 吸頂效果) --- */
+#highlight-nav {
+    /* 使用 sticky 定位，讓它在滾動到頂部時黏住 */
+    position: sticky;
+    /* 當它黏住時，距離視窗頂部 10px */
+    top: 10px;
+    
+    /* 確保它在最上層，不會被其他內容遮擋 */
+    z-index: 50; 
+    
+    /* 以下是外觀樣式，保持不變 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background-color: var(--content-bg-color);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    padding: 0.5rem 1rem;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    /* 增加一個過渡效果，讓吸頂的過程更平滑 */
+    transition: box-shadow 0.3s ease;
+}
+
+/* 這個規則依然需要，確保導覽列在不需要時能被 JS 徹底隱藏 */
+#highlight-nav.hidden {
+    display: none;
+}
+
+/* ... (省略了與之前版本相同的 CSS) ... */
+
+/* --- 新增：iframe 容器樣式 --- */
+.iframe-container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    padding-top: 75%; /* 4:3 的長寬比，您可以根據需要調整 */
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.iframe-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ... (省略了與之前版本相同的 CSS) ... */
+
+/* --- 新增：問題回報 Modal 樣式 --- */
+#report-modal {
+    display: none; /* 預設隱藏，由 JS 控制 */
+    transition: opacity 0.3s ease;
+}
+
+#report-modal.flex {
+    display: flex;
+}
+
+#modal-content {
+    animation: fadeIn 0.3s ease-out forwards;
+}
