@@ -1,15 +1,9 @@
-// --- 【請務必修改此處】 ---
-// 請將您從 Google 表單「預先填入的連結」取得的新資訊，填入以下對應的引號中
 const GOOGLE_FORM_ID = "1FAIpQLSe5vnzsg-1_f1J7f2vftca-dB6xetKor7n-kD6bUHRwNzjL4g";
 const TOPIC_ENTRY_ID = "entry.1026166853";
 const DESCRIPTION_ENTRY_ID = "entry.662465907";
 
-// --- 神家詩歌搜尋 script.js 最終完整版 ---
-
 let hymns = [];
 let collections = {};
-
-// 全域變數，用於高亮導覽
 let highlightedMatches = [];
 let currentMatchIndex = -1;
 
@@ -116,17 +110,15 @@ function initializeReportPage() {
 function displayInitialMessage(showUI = true) {
     const resultsDiv = document.getElementById('results');
     const highlightNav = document.getElementById('highlight-nav');
-    
-    // 確保隱藏可能存在的日程禱告區塊 (相容舊 HTML)
-    const dailyPrayerSection = document.getElementById('daily-prayer-section');
-    if (dailyPrayerSection) dailyPrayerSection.classList.add('hidden');
-
     if (highlightNav) highlightNav.classList.add('hidden');
+    
+    // 將完整的教學內容放回首頁
     resultsDiv.innerHTML = `
-
-
         <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
-            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
+            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
+                使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
+            </div>
+            <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4">
                 <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
                 <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
                 <p><strong>語音輸入：</strong> 按下麥克風圖示，直接說出您想找的詩歌。</p>
@@ -135,27 +127,21 @@ function displayInitialMessage(showUI = true) {
         </div>
     `;
 
-    // 為收合元素加上事件監聽
     const toggle = document.getElementById('instruction-toggle');
     const details = document.getElementById('instruction-details');
     const arrow = document.getElementById('instruction-arrow');
-
-    if (toggle) {
+    
+    if (toggle && details && arrow) {
         toggle.addEventListener('click', () => {
             details.classList.toggle('hidden');
             arrow.style.transform = details.classList.contains('hidden') ? 'rotate(0deg)' : 'rotate(180deg)';
         });
     }
     
-    const backToHomeBtn = document.getElementById('back-to-home-btn');
-    if (backToHomeBtn) backToHomeBtn.classList.add('hidden');
-    
-    const mainControlsContainer = document.getElementById('main-controls-container');
-    const hymnCollectionsDiv = document.getElementById('hymn-collections');
-
+    document.getElementById('back-to-home-btn').classList.add('hidden');
     if (showUI) {
-        if (mainControlsContainer) mainControlsContainer.classList.remove('hidden');
-        if (hymnCollectionsDiv) hymnCollectionsDiv.classList.remove('hidden');
+        document.getElementById('main-controls-container').classList.remove('hidden');
+        document.getElementById('hymn-collections').classList.remove('hidden');
     }
 }
 
@@ -398,57 +384,57 @@ function renderWondersPage() {
     document.getElementById('backToHomeFromWonders').addEventListener('click', () => displayInitialMessage(true));
 }
 
-// 共用的特殊純文字顯示頁面（甜跪＆歡呼、日程禱告共用）
 function renderTextContent(title, content) {
     const highlightNav = document.getElementById('highlight-nav');
     const mainControlsContainer = document.getElementById('main-controls-container');
     const hymnCollectionsDiv = document.getElementById('hymn-collections');
     const resultsDiv = document.getElementById('results');
-    const dailyPrayerSection = document.getElementById('daily-prayer-section');
 
     if(highlightNav) highlightNav.classList.add('hidden');
     if(mainControlsContainer) mainControlsContainer.classList.add('hidden');
     if(hymnCollectionsDiv) hymnCollectionsDiv.classList.add('hidden');
-    if(dailyPrayerSection) dailyPrayerSection.classList.add('hidden');
 
     resultsDiv.innerHTML = `
         <button id="backToCollections" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors w-full mb-4">← 返回主頁</button>
-        <div class="border-b pb-4"><h2 class="text-lg font-semibold text-blue-600 font-size-title">${title}</h2><pre class="mt-4 text-gray-800 whitespace-pre-wrap font-size-content">${content}</pre></div>
+        <div class="border-b pb-4">
+            <h2 class="text-lg font-semibold text-blue-600 font-size-title">${title}</h2>
+            <pre class="mt-4 text-gray-800 whitespace-pre-wrap font-size-content dark:text-gray-200">${content}</pre>
+        </div>
     `;
     document.getElementById('backToCollections').addEventListener('click', () => displayInitialMessage(true));
 }
 
 // 讓詩歌集列表可以點擊
 function makeCollectionsClickable() {
-    const breakingBreadBtn = document.getElementById('breaking-bread-btn');
-    if (breakingBreadBtn) {
-        breakingBreadBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            renderWondersPage();
-        });
-    }
     const hymnCollectionsDiv = document.getElementById('hymn-collections');
     if (!hymnCollectionsDiv) return;
 
     const collectionElements = hymnCollectionsDiv.querySelectorAll('div > p');
     collectionElements.forEach(p => {
         const text = p.textContent.trim();
-
         if (text === '甜跪＆歡呼') {
-            p.parentElement.addEventListener('click', (e) => { e.preventDefault(); renderTextContent(specialContent.title, specialContent.content); });
-            return;
-        }
-        
-        // 綁定日程禱告的純文字顯示功能
-        if (text === '日程禱告' || text === '📅 日程禱告') {
-            p.parentElement.addEventListener('click', (e) => { e.preventDefault(); renderTextContent(dailyPrayerContent.title, dailyPrayerContent.content); });
-            return;
-        }
-        
-        if (text === '精選擘餅詩歌') return;
-        const collectionName = text.substring(text.indexOf(' ')).trim();
-        if (collections[collectionName]) {
-            p.parentElement.addEventListener('click', (e) => { e.preventDefault(); renderHymnList(collectionName); });
+            p.parentElement.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                renderTextContent(specialContent.title, specialContent.content); 
+            });
+        } else if (text === '日程禱告') {
+            p.parentElement.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                renderTextContent(dailyPrayerContent.title, dailyPrayerContent.content); 
+            });
+        } else if (text === '精選擘餅詩歌') {
+            p.parentElement.addEventListener('click', (e) => { 
+                e.preventDefault(); 
+                renderWondersPage(); 
+            });
+        } else {
+            const collectionName = text.substring(text.indexOf(' ')).trim();
+            if (collections[collectionName]) {
+                p.parentElement.addEventListener('click', (e) => { 
+                    e.preventDefault(); 
+                    renderHymnList(collectionName); 
+                });
+            }
         }
     });
 }
