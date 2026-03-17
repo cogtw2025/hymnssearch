@@ -123,11 +123,7 @@ function displayInitialMessage(showUI = true) {
 
     if (highlightNav) highlightNav.classList.add('hidden');
     resultsDiv.innerHTML = `
-        <div class="text-center pt-4 mb-4">
-            <a href="report.html" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
-                詩歌問題回報
-            </a>
-        </div>
+
 
         <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
             <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
