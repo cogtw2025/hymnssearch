@@ -41,7 +41,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 19v3" />
                     </svg>
                     <svg id="voice-stop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden text-red-500">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
                     </svg>
                 </button>
             </div>
@@ -58,6 +58,7 @@
                 </button>
             </div>
         </div>
+        
         <div id="highlight-nav" class="hidden">
             <span id="search-count" class="text-sm text-gray-600 dark:text-gray-400 font-size-ui"></span>
             <div class="flex items-center gap-2">
@@ -81,153 +82,8 @@
         
         <div id="results" class="space-y-4 mt-4"></div>
 
-        <!-- 日程禱告專屬內容區塊 (移出網格，預設隱藏) -->
-        <div id="daily-prayer-section" class="hidden mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-5 w-full text-left">
-            <h2 class="text-2xl font-bold mb-6 text-purple-700 dark:text-purple-400 border-b-2 border-purple-200 dark:border-purple-800 pb-3 flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                每日交託與禱告清單
-            </h2>
-
-            <div class="space-y-8">
-                <!-- 一、為當天交託的禱告 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">一、為當天交託的禱告</h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，我將今日、現在和前面的時光交在祢手中。首先求祢最大與我同在，保護我好像眼中的瞳人，將我藏在祢翅膀的蔭下。求祢用臉光照我，又最大的祝福我。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「阿爸，求祢將最大的恩惠、憐憫、平安、慈愛、喜樂多多賜給孩子。」</span>
-                        </label>
-                        
-                        <div class="pl-8 mt-3">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">c. 弟兄姊妹有不同處境，可參考以下禱告交託的內容（也可在親近主結束時禱告）：</p>
-                            <div class="space-y-2">
-                                <label class="flex items-start space-x-3 cursor-pointer group">
-                                    <input type="checkbox" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-400">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">i. 若你是上班族：「主啊，祝福我今早的個人時光（或：親主Team），使我盡享祢和阿爸的愛；祝福早上工作，使我有智慧；祝福中午跟弟兄姊妹的愛筵，有美好相交；祝福下午見客戶，使我在人眼前蒙恩，記念今晚放工後的小組……」</span>
-                                </label>
-                                <label class="flex items-start space-x-3 cursor-pointer group">
-                                    <input type="checkbox" class="mt-1 h-4 w-4 rounded border-gray-300 text-pink-500 focus:ring-pink-400">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-pink-600 transition-colors">ii. 若你是主婦：「主啊，記念我這刻的個人時光；祝福今早婦女福音小組，祢施行拯救；也記念中午的探訪，使我在人面前蒙恩；記念下午要在家裡等工人維修雪櫃，使一切都順利……」</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 二、保守不受傷害與心靈、身體興盛的禱告 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">二、保守不受傷害與心靈、身體興盛的禱告 <span class="text-sm font-normal text-gray-500">救我們脫離兇惡。（路十一4）</span></h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，求祢保守我不被任何動植物、人、車、物件和任何災害所傷害，或被任何病毒、微菌感染我，使我生病或傷害我。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「求祢賜生命給我心靈、身體，使我靈魂、身體極其興盛，精力充沛，能夠多作祢的工和榮耀祢。」</span>
-                        </label>
-                        
-                        <div class="pl-8 mt-3">
-                            <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 font-medium">c. 處境範例：</p>
-                            <div class="space-y-2">
-                                <label class="flex items-start space-x-3 cursor-pointer group">
-                                    <input type="checkbox" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-400">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">i. 若你從事機械操作：「求主保守機件操作正常，救我脫離一切意外……」</span>
-                                </label>
-                                <label class="flex items-start space-x-3 cursor-pointer group">
-                                    <input type="checkbox" class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-400">
-                                    <span class="text-sm text-gray-600 dark:text-gray-400 group-hover:text-blue-600 transition-colors">ii. 若你從事辦公室工作：「求主救我不受電腦屏幕幅射的影響，也保守我的肩膊和手腕不受勞損……」</span>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 三、幫助我們勝過仇敵、心靈釋放的禱告 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">三、幫助我們勝過仇敵、心靈釋放的禱告</h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，懇切求祢捆綁、驅逐魔鬼與他一切差役，一切邪靈污鬼遠遠的離開我，絕對不准他們絲毫挨近我，干擾我，試探我和控告我。求祢藉聖靈各方面幫助，使我大大得勝。求祢救我脫離一切惡人、一切惡者和那惡者。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「主啊，求祢藉聖靈和真理，使我勝過仇敵一切的攪擾、試探、控告和陰影，並一切不符合真理的感受、感覺、肉體和不準確的良心反應，脫離一切錯誤的觀念和不好的心理習慣，使我更懂得運用信心，勝過控告和煩雜的心思，盡享『成了』的果效，擁抱祢和阿爸的愛和情。」</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 四、心靈祝福的禱告 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">四、心靈祝福的禱告</h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，我需要祢的愛大大激勵、吸引、滋潤、安慰、鼓勵、鼓舞我，和祢不斷向我顯現，與我說話。求祢又賜聖靈不斷和更加充滿我，感動我和厚厚在我身上。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「求祢藉著聖靈保守我的心和意念純全、正直，並十分的平安、堅定和釋放。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">c. 「主啊，求祢幫助我終日敬拜祢，向祢活著，因祢活著和為祢活著。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">d. 「爸爸，求祢將那賜人智慧和啟示的聖靈厚厚賞給孩子，使孩子真知道祢，真知道主，真知道聖靈和祢完美的救恩、完美的心意，並曉得走永生的道路。」</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 五、關乎主心意完成的禱告 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">五、關乎主心意完成的禱告</h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，求祢使全地弟兄姊妹都清楚祢的心意和託付，有異象，向著標竿直跑。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「主啊，求祢使我和眾弟兄姊妹心靈、身體和事奉都有最榮耀的突破，又滿心知道祢的旨意、教會前面當走的路和教會的藍圖，使我們在這時代最榮耀的與祢配合，最榮耀的完成祢的心意。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">c. 「主啊，懇切求祢在台北、台中、高雄（<span class="italic text-gray-500">以及你身處的城市或區域</span>）大大復興祢的作為。求祢大大祝福、使用我們文字、影音和團隊的事奉，將祢的心意、真理、道路傳開，成為全球極大的祝福。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">d. 「主啊，寶貴祢是公義、伸冤的神，求祢為我們伸冤辯屈，大大榮耀我們，使我們榮耀祢。」</span>
-                        </label>
-                    </div>
-                </div>
-
-                <!-- 六、感謝與心願 -->
-                <div>
-                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-100 mb-3">六、感謝與心願</h3>
-                    <div class="space-y-3 pl-2 md:pl-4">
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">a. 「主啊，感謝祢完全投入我的生命、今生和永恆中。」</span>
-                        </label>
-                        <label class="flex items-start space-x-3 cursor-pointer group">
-                            <input type="checkbox" class="mt-1 h-5 w-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500">
-                            <span class="text-gray-700 dark:text-gray-300 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">b. 「阿爸啊，願祢的國降臨。主耶穌啊，願祢快來。」</span>
-                        </label>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <div id="hymn-collections" class="mt-6 pt-4 border-t">
             <h2 class="font-semibold text-center text-gray-700 mb-3 font-size-title">詩歌集列表(可點選)</h2>
-            <!-- 詩歌集網格開始 -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-size-ui">
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H000 神家詩歌合訂本(1)</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>HH000 神家詩歌合訂本(2)</p></div>
@@ -256,38 +112,44 @@
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2200 神家詩歌第二十二集</p></div>
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2300 神家詩歌第二十三集</p></div>
                 <div id="breaking-bread-btn" class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>精選擘餅詩歌</p></div>
-                
-                <!-- 【修復】恢復原本的「甜跪＆歡呼」文字，讓 js 找得到 -->
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>甜跪＆歡呼</p></div>
-                
                 <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>日程禱告</p></div>
             </div>
-            <!-- 詩歌集網格結束 -->
         </div>
 
         <hr class="my-6 border-t-2 border-gray-200">
 
-        <div class="my-4 flex justify-center gap-4">
+        <!-- ===== 新版底部區塊：三等份並排 ===== -->
+        <div class="my-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
+            
+            <!-- 區塊 1：詩歌問題回報 (滿版置中) -->
             <a href="report.html" 
-                class="inline-block bg-blue-300 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
+                class="block w-full text-center bg-blue-300 text-white px-2 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
                 詩歌問題回報
             </a>
+
+            <!-- 區塊 2：問題蒐集總覽 (滿版置中) -->
             <a href="report-view.html" 
-                class="inline-block bg-blue-300 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
+                class="block w-full text-center bg-blue-300 text-white px-2 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
                 問題蒐集總覽
             </a>
+
+            <!-- 區塊 3：國旗計數器 (靠中對齊) -->
+            <div class="flex justify-center">
+                <a href="https://info.flagcounter.com/njoO"><img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_CCCCCC/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/" alt="Flag Counter" border="0"></a>
             </div>
 
-    <hr class="my-6 border-t-2 border-gray-200">
-
-    </div>
-
-    <footer class="mt-4 flex flex-col items-center justify-center text-xs text-gray-500 pb-4 gap-3 w-full">
-        <p>© <span id="copyright-year"></span> 台灣神的教會製作. All Rights Reserved. 版權所有.</p>
-        <div class="flex flex-col items-center gap-1 mt-1">
-            <div align="center"><script language="javascript" src="https://yo.ucounter.com/26/llbk/03/s/15/"></script><script language="javascript" src="https://ucounter.com/stat.js"></script></div>
         </div>
-    </footer>
+        <!-- ======================================= -->
+
+        <hr class="my-4 border-t border-gray-100 dark:border-gray-700">
+
+        <!-- 版權宣告 (已移入白色區域的最下方) -->
+        <footer class="flex flex-col items-center justify-center text-xs text-gray-500 pb-2 w-full">
+            <p>© <span id="copyright-year"></span> 台灣神的教會製作. All Rights Reserved. 版權所有.</p>
+        </footer>
+
+    </div> <!-- 結束白色主內容區塊 -->
 
     <div id="report-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
         <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg relative">
