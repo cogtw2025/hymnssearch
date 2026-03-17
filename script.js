@@ -126,9 +126,6 @@ function displayInitialMessage(showUI = true) {
 
 
         <div class="text-center text-gray-500 pt-4 px-4 font-size-message border-t">
-            <div id="instruction-toggle" class="inline-block cursor-pointer font-semibold hover:text-blue-500 transition-colors font-size-title">
-                使用詩歌搜尋教學 <span id="instruction-arrow" class="inline-block transition-transform text-xs align-middle">▼</span>
-            </div>
             <div id="instruction-details" class="hidden mt-4 text-left space-y-2 border-t pt-4 ">
                 <p><strong>關鍵字搜尋：</strong> 在上方搜尋框輸入詩歌代碼、名稱或部分歌詞。</p>
                 <p><strong>詩歌集瀏覽：</strong> 點擊下方的詩歌集列表，瀏覽完整內容。</p>
