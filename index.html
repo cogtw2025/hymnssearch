@@ -1,166 +1,1102 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-TW" class="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>神家詩歌搜尋</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/heroicons/2.1.3/24/outline/heroicons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    colors: {
+                        // 使用中性灰階
+                        gray: tailwind.colors.neutral,
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* 極簡風格自訂 CSS */
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* 隱藏捲軸但保持可滾動 */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* 關鍵字高亮 (黑白灰風格) */
+        .highlight {
+            background-color: #e5e5e5;
+            color: #000;
+            font-weight: 700;
+            padding: 0 4px;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+
+        .dark .highlight {
+            background-color: #404040;
+            color: #fff;
+        }
+
+        /* 作用中的高亮 */
+        .highlight.active {
+            background-color: #000;
+            color: #fff;
+            box-shadow: 0 0 0 2px #000;
+        }
+
+        .dark .highlight.active {
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 0 0 2px #fff;
+        }
+
+        /* 詩歌內文排版 */
+        .hymn-content {
+            white-space: pre-wrap;
+            line-height: 2;
+        }
+
+        /* 搜尋輸入框極簡化 */
+        .search-input {
+            border: none;
+            border-bottom: 1px solid #d4d4d4;
+            border-radius: 0;
+            padding: 12px 0;
+            background: transparent;
+            box-shadow: none !important;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-bottom: 2px solid #000;
+        }
+
+        .dark .search-input {
+            border-bottom: 1px solid #404040;
+        }
+
+        .dark .search-input:focus {
+            border-bottom: 2px solid #fff;
+        }
+
+        /* 導覽列吸頂效果 */
+        #highlight-nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+
+        /* 視圖切換動畫 */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .view-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 單選框極簡風格 */
+        input[type="radio"],
+        input[type="checkbox"] {
+            accent-color: #000;
+        }
+
+        .dark input[type="radio"],
+        .dark input[type="checkbox"] {
+            accent-color: #fff;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
-    <div id="main-content" class="w-full max-w-2xl bg-white rounded-lg shadow-lg p-6">
-        <div class="relative text-center mb-2">
-            <h1 class="font-bold font-size-title">神家詩歌搜尋</h1>
-            <div class="text-center">
-                <p class="text-gray-500 italic text-sm mt-2 font-size-ui">
-                「我要一生向耶和華唱詩！我還活的時候，要向我神歌頌！」 — 詩篇 104:33
-                </p>
+
+<body
+    class="bg-gray-50 dark:bg-black text-gray-900 dark:text-gray-100 min-h-screen transition-colors duration-300 font-sans">
+
+    <!-- 主容器 -->
+    <div class="max-w-2xl mx-auto min-h-screen bg-white dark:bg-gray-900 shadow-sm relative flex flex-col">
+
+        <!-- 頂部導覽列 (全域) -->
+        <header
+            class="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800 sticky top-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur z-40">
+            <div class="flex gap-4">
+                <button onclick="navigate('home')"
+                    class="text-sm font-medium text-gray-500 hover:text-black dark:hover:text-white transition-colors">
+                    首頁
+                </button>
             </div>
-        </div>
 
-        <div class="my-4">
-            <button id="back-to-home-btn" class="font-button text-sm border rounded-md px-4 py-2 hover:bg-gray-200 transition-colors hidden w-full sm:w-auto">← 返回首頁</button>
-        </div>
-
-        <div id="main-controls-container" class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 mb-4">
-            <div class="flex-grow flex items-center relative">
-                <input
-                    type="text"
-                    id="searchInput"
-                    placeholder="輸入詩歌名稱、歌詞或代碼"
-                    class="w-full p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
-                >
-                <button id="voiceSearchBtn" class="absolute right-0 top-0 h-full px-3 text-gray-600 hover:text-blue-600 focus:outline-none">
-                    <svg id="voice-mic-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 10v2a7 7 0 01-14 0v-2" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 19v3" />
+            <div class="flex items-center gap-4 text-gray-500 dark:text-gray-400">
+                <!-- 字體縮小 -->
+                <button id="decrease-font" class="hover:text-black dark:hover:text-white" title="縮小字體">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path>
                     </svg>
-                    <svg id="voice-stop-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 hidden text-red-500">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25-2.25v-9Z" />
+                </button>
+                <span class="text-xs">A</span>
+                <!-- 字體放大 -->
+                <button id="increase-font" class="hover:text-black dark:hover:text-white" title="放大字體">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+                <div class="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1"></div>
+                <!-- 主題切換 -->
+                <button id="theme-toggle" class="hover:text-black dark:hover:text-white">
+                    <!-- 月亮 -->
+                    <svg id="theme-icon-dark" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z">
+                        </path>
+                    </svg>
+                    <!-- 太陽 -->
+                    <svg id="theme-icon-light" class="w-5 h-5 hidden" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                        </path>
                     </svg>
                 </button>
             </div>
-            
-            <div class="flex items-center justify-center sm:justify-end space-x-4 flex-shrink-0">
-                <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-600 font-size-ui hidden sm:inline">字體:</span>
-                    <button id="decrease-font" class="font-button text-lg font-bold border rounded-md px-4 py-1 hover:bg-gray-200 transition-colors w-12">-</button>
-                    <button id="increase-font" class="font-button text-lg font-bold border rounded-md px-4 py-1 hover:bg-gray-200 transition-colors w-12">+</button>
+        </header>
+
+        <!-- 內容區域 -->
+        <div id="app-content" class="p-6 sm:p-8 flex-grow font-size-base">
+
+            <!-- ==================== 1. 首頁視圖 (搜尋與分類) ==================== -->
+            <main id="view-home" class="view-section active">
+                <div class="text-center mb-10 mt-4">
+                    <h1 class="text-2xl sm:text-3xl font-bold tracking-widest mb-3">神家詩歌搜尋</h1>
+                    <p class="text-xs sm:text-sm text-gray-400 font-light tracking-wider">「我要一生向耶和華唱詩！我還活的時候，要向我神歌頌！」 —
+                        詩篇 104:33</p>
                 </div>
-                <button id="theme-toggle" class="p-2 rounded-md border hover:bg-gray-200 transition-colors">
-                    <svg id="theme-toggle-dark-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
-                    <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
-                </button>
+
+                <!-- 搜尋區 -->
+                <div class="relative mb-8">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-gray-400 absolute left-0" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="search-input"
+                            class="search-input w-full pl-8 pr-10 text-lg sm:text-xl font-medium placeholder-gray-300 dark:placeholder-gray-700"
+                            placeholder="輸入歌名、歌詞、編號">
+
+                        <!-- 語音搜尋按鈕 -->
+                        <button id="voice-search-btn"
+                            class="absolute right-0 text-gray-400 hover:text-black dark:hover:text-white p-2">
+                            <svg id="voice-mic-icon" class="w-5 h-5" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z">
+                                </path>
+                            </svg>
+                            <svg id="voice-stop-icon" class="w-5 h-5 hidden text-red-500" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="6"></circle>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="loading-indicator" class="text-center py-10 text-gray-400 text-sm hidden">
+                    資料載入中...
+                </div>
+
+                <!-- 分類目錄網格 (預設顯示) -->
+                <div id="collections-grid-container">
+                    <div class="mb-12">
+                        <h2 class="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4 text-center">詩歌集目錄
+                        </h2>
+                        <div id="collections-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <!-- 網格由 JS 動態產生 -->
+                        </div>
+                    </div>
+
+                    <!-- Along with GOD -->
+                    <div>
+                        <h2 class="text-xs font-bold text-gray-400 tracking-widest uppercase mb-4 text-center">Along
+                            with GOD</h2>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div onclick="navigate('cheers')"
+                                class="p-4 border border-gray-200 dark:border-gray-800 rounded-sm text-center cursor-pointer hover:border-black dark:hover:border-gray-400 transition-colors group bg-white dark:bg-black">
+                                <p
+                                    class="font-medium text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">
+                                    歡呼</p>
+                            </div>
+                            <div onclick="navigate('prayers')"
+                                class="p-4 border border-gray-200 dark:border-gray-800 rounded-sm text-center cursor-pointer hover:border-black dark:hover:border-gray-400 transition-colors group bg-white dark:bg-black">
+                                <p
+                                    class="font-medium text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">
+                                    日程禱告</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜尋結果/特定分類列表 (預設隱藏) -->
+                <div id="list-container" class="hidden">
+                    <div
+                        class="flex items-center justify-between border-b border-gray-100 dark:border-gray-800 pb-3 mb-2">
+                        <div class="flex items-baseline gap-3">
+                            <h2 id="current-list-title" class="text-lg font-bold"></h2>
+                            <span id="search-stats" class="text-xs text-gray-400 tracking-wide hidden"></span>
+                        </div>
+                        <button onclick="showGrid()"
+                            class="text-sm text-gray-500 hover:text-black dark:hover:text-white transition-colors tracking-widest">
+                            ← 返回目錄
+                        </button>
+                    </div>
+
+                    <div id="hymn-list" class="space-y-0">
+                        <!-- 列表由 JS 產生 -->
+                    </div>
+                </div>
+            </main>
+
+
+            <!-- ==================== 2. 單首詩歌視圖 ==================== -->
+            <main id="view-hymn" class="view-section">
+                <!-- 關鍵字導航列 (預設隱藏) -->
+                <div id="highlight-nav"
+                    class="hidden flex items-center justify-between bg-white/95 dark:bg-gray-900/95 border border-gray-200 dark:border-gray-800 px-4 py-3 mb-6 backdrop-blur">
+                    <span class="text-sm font-medium"><span id="match-current">0</span> / <span
+                            id="match-total">0</span></span>
+                    <div class="flex gap-4">
+                        <button id="prev-match" class="text-gray-500 hover:text-black dark:hover:text-white"><svg
+                                class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7">
+                                </path>
+                            </svg></button>
+                        <button id="next-match" class="text-gray-500 hover:text-black dark:hover:text-white"><svg
+                                class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
+                            </svg></button>
+                        <div class="w-px h-5 bg-gray-300 dark:bg-gray-700"></div>
+                        <button id="close-highlight" class="text-gray-500 hover:text-black dark:hover:text-white"><svg
+                                class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M6 18L18 6M6 6l12 12"></path>
+                            </svg></button>
+                    </div>
+                </div>
+
+                <div class="mb-10 text-center">
+                    <p id="detail-collection" class="text-xs text-gray-400 mb-2 tracking-widest uppercase"></p>
+                    <h2 id="detail-title" class="text-2xl font-bold mb-1"></h2>
+                    <p id="detail-code" class="text-sm text-gray-500"></p>
+                </div>
+
+                <div id="detail-content"
+                    class="hymn-content text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 px-2 sm:px-6">
+                    <!-- 歌詞內容 -->
+                </div>
+
+                <div class="mt-16 flex justify-center">
+                    <button onclick="navigate('home')"
+                        class="border border-gray-300 dark:border-gray-700 px-8 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors uppercase tracking-widest">
+                        返回列表
+                    </button>
+                </div>
+            </main>
+
+
+            <!-- ==================== 3. 意見回報表單視圖 ==================== -->
+            <main id="view-report" class="view-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl font-bold tracking-widest mb-2">問題回報</h2>
+                    <p class="text-sm text-gray-500">感謝您的回饋</p>
+                </div>
+
+                <form id="report-form" class="space-y-8 max-w-md mx-auto">
+                    <div>
+                        <label class="block text-sm font-medium mb-4 uppercase tracking-widest">留言主題</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" name="problem-topic" value="歌詞錯字"
+                                    class="w-4 h-4 border-gray-300 text-black dark:text-white focus:ring-black">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">歌詞錯字</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" name="problem-topic" value="功能異常"
+                                    class="w-4 h-4 border-gray-300 text-black dark:text-white focus:ring-black">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">功能異常</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" name="problem-topic" value="建議新增"
+                                    class="w-4 h-4 border-gray-300 text-black dark:text-white focus:ring-black">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">建議新增</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer group">
+                                <input type="checkbox" name="problem-topic" value="其他"
+                                    class="w-4 h-4 border-gray-300 text-black dark:text-white focus:ring-black">
+                                <span
+                                    class="text-gray-700 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors">其他</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="problem-description"
+                            class="block text-sm font-medium mb-3 uppercase tracking-widest">留言內容</label>
+                        <textarea id="problem-description" rows="5" required
+                            class="w-full p-3 border border-gray-300 dark:border-gray-700 bg-transparent focus:outline-none focus:border-black dark:focus:border-white transition-colors resize-none"
+                            placeholder="請描述細節..."></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4">
+                        <button type="button" onclick="navigate('home')"
+                            class="text-sm text-gray-500 hover:text-black dark:hover:text-white transition-colors">取消</button>
+                        <button type="submit" id="submit-report-btn"
+                            class="bg-black dark:bg-white text-white dark:text-black px-8 py-2.5 text-sm font-medium hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors tracking-widest">
+                            送出
+                        </button>
+                    </div>
+                </form>
+
+                <div id="form-success-message"
+                    class="hidden text-center p-8 border border-gray-200 dark:border-gray-800 mt-8">
+                    <svg class="w-12 h-12 mx-auto mb-4 text-black dark:text-white" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7">
+                        </path>
+                    </svg>
+                    <p class="font-bold text-lg mb-2">已收到您的回報</p>
+                    <p class="text-sm text-gray-500">謝謝您的協助。</p>
+                    <button onclick="navigate('home')" class="mt-6 text-sm underline hover:text-gray-500">返回首頁</button>
+                </div>
+            </main>
+
+
+            <!-- ==================== 4. 觀看回報紀錄視圖 ==================== -->
+            <main id="view-report-list" class="view-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl font-bold tracking-widest mb-2">回報紀錄</h2>
+                    <p class="text-sm text-gray-500">歷來的建議與修正</p>
+                </div>
+
+                <div id="report-records" class="space-y-4 max-w-xl mx-auto">
+                    <p id="report-loading" class="text-center text-gray-400 py-10 text-sm">讀取中...</p>
+                </div>
+
+                <div class="mt-12 text-center">
+                    <button onclick="navigate('home')"
+                        class="text-sm text-gray-500 hover:text-black dark:hover:text-white transition-colors">返回首頁</button>
+                </div>
+            </main>
+
+            <!-- ==================== 5. 日程禱告視圖 ==================== -->
+            <main id="view-prayers" class="view-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl font-bold tracking-widest mb-2">日程禱告</h2>
+                    <p class="text-sm text-gray-500 tracking-wider">將今日交託在主手中</p>
+                </div>
+
+                <div class="max-w-2xl mx-auto space-y-12 px-2 sm:px-4">
+                    <!-- 一、 為當天交託的禱告 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            一、 為當天交託的禱告</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，我將今日、現在和前面的時光交在祢手中。首先求祢最大與我同在，保護我好像眼中的瞳人，將我藏在祢翅膀的蔭下。求祢用臉光照我，又最大的祝福我。」</p>
+                            <p>「阿爸，求祢將最大的恩惠、憐憫、平安、慈愛、喜樂多多賜給孩子。」</p>
+                        </div>
+                        <div
+                            class="mt-5 p-4 bg-gray-50 dark:bg-gray-800/50 text-sm text-gray-500 leading-loose border border-gray-100 dark:border-gray-800">
+                            <p class="mb-3"><span
+                                    class="font-bold text-gray-700 dark:text-gray-300">若你是上班族：</span><br>「主啊，祝福我今早的個人時光（或：親主Team），使我盡享祢和阿爸的愛；祝福早上工作，使我有智慧；祝福中午跟弟兄姊妹的愛筵，有美好相交；祝福下午見客戶，使我在人眼前蒙恩，記念今晚放工後的小組……」
+                            </p>
+                            <p><span
+                                    class="font-bold text-gray-700 dark:text-gray-300">若你是主婦：</span><br>「主啊，記念我這刻的個人時光；祝福今早婦女福音小組，祢施行拯救；也記念中午的探訪，使我在人面前蒙恩；記念下午要在家裡等工人維修雪櫃，使一切都順利……」
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 二、 保守不受傷害與心靈、身體興盛的禱告 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            二、 保守不受傷害與心靈、身體興盛的禱告</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，求祢保守我不被任何動植物、人、車、物件和任何災害所傷害，或被任何病毒、微菌感染我，使我生病或傷害我。」</p>
+                            <p>「求祢賜生命給我心靈、身體，使我靈魂、身體極其興盛，精力充沛，能夠多作祢的工和榮耀祢。」</p>
+                        </div>
+                        <div
+                            class="mt-5 p-4 bg-gray-50 dark:bg-gray-800/50 text-sm text-gray-500 leading-loose border border-gray-100 dark:border-gray-800">
+                            <p class="mb-3"><span
+                                    class="font-bold text-gray-700 dark:text-gray-300">若你從事機械操作：</span><br>「求主保守機件操作正常，救我脫離一切意外……」
+                            </p>
+                            <p><span
+                                    class="font-bold text-gray-700 dark:text-gray-300">若你從事辦公室工作：</span><br>「求主救我不受電腦屏幕幅射的影響，也保守我的肩膊和手腕不受勞損……」
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 三、 幫助我們勝過仇敵、心靈釋放的禱告 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            三、 幫助我們勝過仇敵、心靈釋放的禱告</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，懇切求祢捆綁、驅逐魔鬼與他一切差役，一切邪靈污鬼遠遠的離開我，絕對不准他們絲毫挨近我，干擾我，試探我和控告我。求祢救我脫離一切惡人、一切惡者和那惡者。」</p>
+                            <p>「主啊，求祢藉聖靈和真理，使我勝過仇敵一切的攪擾、試探、控告和陰影，並一切不符合真理的感受、感覺、肉體和不準確的良心反應，脫離一切錯誤的觀念和不好的心理習慣，使我更懂得運用信心，勝過控告和煩雜的心思，盡享『成了』的果效，擁抱祢和阿爸的愛和情。」
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- 四、 心靈祝福的禱告 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            四、 心靈祝福的禱告</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，我需要祢的愛大大激勵、吸引、滋潤、安慰、鼓勵、鼓舞我，和祢不斷向我顯現，與我說話。求祢又賜聖靈不斷和更加充滿我，感動我和厚厚在我身上。」</p>
+                            <p>「求祢藉著聖靈保守我的心和意念純全、正直，並十分的平安、堅定和釋放。」</p>
+                            <p>「主啊，求祢幫助我終日敬拜祢，向祢活著，因祢活著和為祢活著。」</p>
+                            <p>「爸爸，求祢將那賜人智慧和啟示的聖靈厚厚賞給孩子，使孩子真知道祢，真知道主，真知道聖靈和祢完美的救恩、完美的心意，並曉得走永生的道路。」</p>
+                        </div>
+                    </section>
+
+                    <!-- 五、 關乎主心意完成的禱告 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            五、 關乎主心意完成的禱告</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，求祢使全地弟兄姊妹都清楚祢的心意和託付，有異象，向著標竿直跑。」</p>
+                            <p>「主啊，求祢使我和眾弟兄姊妹心靈、身體和事奉都有最榮耀的突破，又滿心知道祢的旨意、教會前面當走的路和教會的藍圖，使我們在這時代最榮耀的與祢配合，最榮耀的完成祢的心意。」</p>
+                            <p>「主啊，懇切求祢在台北、台中、高雄大大復興祢的作為。求祢大大祝福、使用我們文字、影音和團隊的事奉，將祢的心意、真理、道路傳開，成為全球極大的祝福。」</p>
+                            <p>「主啊，寶貴祢是公義、伸冤的神，求祢為我們伸冤辯屈，大大榮耀我們，使我們榮耀祢。」</p>
+                        </div>
+                    </section>
+
+                    <!-- 六、 感謝與心願 -->
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            六、 感謝與心願</h3>
+                        <div
+                            class="space-y-4 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊，感謝祢完全投入我的生命、今生和永恆中。」</p>
+                            <p>「阿爸啊，願祢的國降臨。主耶穌啊，願祢快來。」</p>
+                        </div>
+                    </section>
+
+                    <div class="pt-8 pb-4 flex justify-center">
+                        <button onclick="navigate('home')"
+                            class="border border-gray-300 dark:border-gray-700 px-8 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors uppercase tracking-widest">
+                            返回首頁
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- ==================== 6. 歡呼視圖 ==================== -->
+            <main id="view-cheers" class="view-section">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl font-bold tracking-widest mb-2">歡呼</h2>
+                    <p class="text-sm text-gray-500 tracking-wider">因祂高興歡喜</p>
+                </div>
+
+                <div class="max-w-2xl mx-auto space-y-12 px-2 sm:px-4">
+
+                    <section>
+                        <h3
+                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
+                            早晨的宣告與讚美</h3>
+                        <div
+                            class="space-y-6 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
+                            <p>「主啊！寶貴今日是祢所訂定的日子，使我在其中因祢高興歡喜！」</p>
+
+                            <p>「主啊！寶貴祢已經復活了！祢是我的倚靠，必定會幫助我！」</p>
+
+                            <p>「主阿！寶貴祢榮耀託付了我，今天必定最有意義、最喜樂！」</p>
+
+                            <p>「阿爸！無限寶貴祢是我的親阿爸，我是祢的親孩子，我從祢而生，祢最愛我、最喜歡我！」</p>
+
+                            <p>「主啊！無限寶貴祢與我永遠聯合！祢是我的真良人，我是祢的至愛佳偶，祢的能力全屬我！主啊！我愛祢！」</p>
+
+                            <p>「主啊！人生有祢，祢必使我人生極其精彩難忘，成爲教會與多人的祝福！」</p>
+                        </div>
+                    </section>
+
+                    <div class="pt-8 pb-4 flex justify-center">
+                        <button onclick="navigate('home')"
+                            class="border border-gray-300 dark:border-gray-700 px-8 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors uppercase tracking-widest">
+                            返回首頁
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+        </div> <!-- End app-content -->
+
+        <!-- 頁尾宣告與連結 -->
+        <footer
+            class="w-full py-8 text-center flex flex-col items-center gap-8 mt-auto border-t border-gray-100 dark:border-gray-800/50">
+
+            <!-- 系統回報與版權宣告 (次要資訊區，字體較小) -->
+            <div class="flex flex-col items-center gap-3 text-xs text-gray-400">
+                <div class="flex items-center justify-center gap-4 mb-1">
+                    <button onclick="navigate('report')"
+                        class="hover:text-black dark:hover:text-white transition-colors tracking-widest">問題回報</button>
+                    <span class="text-gray-200 dark:text-gray-800">|</span>
+                    <button onclick="navigate('report-list')"
+                        class="hover:text-black dark:hover:text-white transition-colors tracking-widest">觀看回報</button>
+                </div>
+
+                <p class="tracking-widest">© <span id="copyright-year"></span> 台灣神的教會</p>
+
+                <!-- 國旗計數器 (設定灰階濾鏡以符合極簡風格，並調整尺寸) -->
+                <a href="https://info.flagcounter.com/njoO" class="opacity-40 hover:opacity-100 transition-opacity mt-2"
+                    style="filter: grayscale(100%);">
+                    <img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_FFFFFF/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
+                        alt="Flag Counter" border="0" class="h-10 sm:h-12 w-auto">
+                </a>
             </div>
-        </div>
-        
-        <div id="highlight-nav" class="hidden">
-            <span id="search-count" class="text-sm text-gray-600 dark:text-gray-400 font-size-ui"></span>
-            <div class="flex items-center gap-2">
-                <span class="sm:inline text-sm font-semibold font-size-ui hidden">上/下搜索：</span>
-                <button id="prev-match" class="font-button p-2 rounded-md border hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
-                </button>
-                <span id="match-counter" class="font-mono text-sm font-size-ui">0 / 0</span>
-                <button id="next-match" class="font-button p-2 rounded-md border hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                </button>
-                
-                <button id="back-to-top-btn" class="font-button p-2 px-3 rounded-md border hover:bg-gray-200 transition-colors flex items-center gap-1.5" title="回到最頂端">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 align-middle">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 6.75L12 3m0 0l3.75 3.75M12 3v18" />
-                </svg>
-                <span class="hidden sm:inline align-middle">回到上方</span>
-                </button>
-            </div>
-        </div>
-        
-        <div id="results" class="space-y-4 mt-4"></div>
 
-        <div id="hymn-collections" class="mt-6 pt-4 border-t">
-            <h2 class="font-semibold text-center text-gray-700 mb-3 font-size-title">詩歌集列表(可點選)</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 font-size-ui">
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>H000 神家詩歌合訂本(1)</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>HH000 神家詩歌合訂本(2)</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0000 愛的迴響</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>01000 神家詩歌第一集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0200 神家詩歌第二集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0300 神家詩歌第三集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0400 神家詩歌第四集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0500 神家詩歌第五集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0600 神家詩歌第六集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0700 神家詩歌第七集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0800 神家詩歌第八集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>0900 神家詩歌第九集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>10000 神家詩歌第十集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>11000 神家詩歌第十一集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1200 神家詩歌第十二集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1300 神家詩歌第十三集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1400 神家詩歌第十四集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1500 神家詩歌第十五集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1600 神家詩歌第十六集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1700 神家詩歌第十七集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1800 神家詩歌第十八集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>1900 神家詩歌第十九集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2000 神家詩歌第二十集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2100 神家詩歌第二十一集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2200 神家詩歌第二十二集</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>2300 神家詩歌第二十三集</p></div>
-                <div id="breaking-bread-btn" class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>精選擘餅詩歌</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>甜跪＆歡呼</p></div>
-                <div class="p-3 border rounded-md text-center transition-all duration-200 hover:shadow-md hover:scale-105 hover:bg-gray-50 dark:border-gray-700 dark:hover:bg-gray-800 cursor-pointer"><p>日程禱告</p></div>
-            </div>
-        </div>
-
-        <hr class="my-6 border-t-2 border-gray-200">
-
-        <!-- ===== 新版底部區塊：三等份並排 ===== -->
-        <div class="my-4 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center">
-            
-            <!-- 區塊 1：詩歌問題回報 (滿版置中) -->
-            <a href="report.html" 
-                class="block w-full text-center bg-blue-300 text-white px-2 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
-                詩歌問題回報
-            </a>
-
-            <!-- 區塊 2：問題蒐集總覽 (滿版置中) -->
-            <a href="report-view.html" 
-                class="block w-full text-center bg-blue-300 text-white px-2 py-2 rounded-md hover:bg-blue-700 transition-colors shadow-md text-sm font-semibold">
-                問題蒐集總覽
-            </a>
-
-            <!-- 區塊 3：國旗計數器 (靠中對齊) -->
-            <div class="flex justify-center">
-                <a href="https://info.flagcounter.com/njoO"><img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_CCCCCC/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/" alt="Flag Counter" border="0"></a>
-            </div>
-
-        </div>
-        <!-- ======================================= -->
-
-        <hr class="my-4 border-t border-gray-100 dark:border-gray-700">
-
-        <!-- 版權宣告 (已移入白色區域的最下方) -->
-        <footer class="flex flex-col items-center justify-center text-xs text-gray-500 pb-2 w-full">
-            <p>© <span id="copyright-year"></span> 台灣神的教會製作. All Rights Reserved. 版權所有.</p>
         </footer>
 
-    </div> <!-- 結束白色主內容區塊 -->
+    </div> <!-- End 主容器 -->
 
-    <div id="report-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center p-4">
-        <div id="modal-content" class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-lg relative">
-            <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 dark:hover:text-gray-200">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
-    </div>
-    <script src="script.js"></script>
-    
+    <!-- JavaScript 邏輯整合 -->
+    <script>
+        // --- 1. 基本設定與資料 ---
+        const GOOGLE_FORM_ID = "1FAIpQLSe5vnzsg-1_f1J7f2vftca-dB6xetKor7n-kD6bUHRwNzjL4g";
+        const TOPIC_ENTRY_ID = "entry.1026166853";
+        const DESCRIPTION_ENTRY_ID = "entry.662465907";
+        const REPORT_API_URL = "https://script.google.com/macros/s/AKfycbzpemYNQtlBwmjb9ZJihNkCWW2k-2yZY8DTBX4umCtYwL1b2_6Oh-Dx6WWamoGKgJ6Q/exec";
+
+        let hymns = [];
+        let collections = {};
+        let highlightedMatches = [];
+        let currentMatchIndex = -1;
+
+        // 內建少量備用資料，避免 hymns.json 遺失時完全空白
+        const fallbackData = [
+            { "code": "0001", "title": "祢這份愛", "collection": "愛的迴響", "content": "1. 你這份愛!使我深覺自己寶貴。\n你這份愛!使我感受萬物美麗。\n人生充滿意義,善美,\n使我明白為何要有永恆,\n我已明白,為何你要住在我心裡!" },
+            { "code": "2383", "title": "看哪，神的帳幕在人間", "collection": "神家詩歌第二十三集", "content": "1.我又看見、我又看見一個新天新地；\n因為先前的天地已經過去了，\n海也不再有了，海也不再有了。\n我又看見聖城新耶路撒冷" }
+        ];
+
+        // --- 2. 視圖導覽系統 (SPA Router) ---
+        function navigate(viewId) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+
+            if (viewId === 'report-list') {
+                loadReports();
+            } else if (viewId === 'home') {
+                // 如果是回首頁，預設顯示目錄網格，清空搜尋
+                showGrid();
+            }
+        }
+
+        // --- 3. 初始化與資料載入 ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('copyright-year').textContent = new Date().getFullYear();
+            setupTheme();
+            setupFontSize();
+            setupSearch();
+            setupVoiceSearch();
+            setupReportForm();
+
+            // 載入資料
+            try {
+                document.getElementById('loading-indicator').classList.remove('hidden');
+                const response = await fetch('hymns.json');
+                if (!response.ok) throw new Error('Network response was not ok');
+                hymns = await response.json();
+            } catch (error) {
+                console.warn('無法載入 hymns.json，使用備用資料:', error);
+                hymns = fallbackData;
+            } finally {
+                document.getElementById('loading-indicator').classList.add('hidden');
+                processCollections();
+                // 預設顯示目錄網格，不再預設印出全部詩歌
+                showGrid();
+            }
+        });
+
+        // 輔助函數：將中文數字轉換為阿拉伯數字以供排序
+        function chineseToNum(str) {
+            const digits = { '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6, '七': 7, '八': 8, '九': 9 };
+            let total = 0;
+            if (str.includes('十')) {
+                let parts = str.split('十');
+                let tens = parts[0] ? digits[parts[0]] : 1;
+                let units = parts[1] ? digits[parts[1]] : 0;
+                total = tens * 10 + units;
+            } else {
+                total = digits[str] || 999;
+            }
+            return total;
+        }
+
+        // --- 4. 目錄網格處理 (Grid Directory) ---
+        function processCollections() {
+            collections = {};
+            hymns.forEach(hymn => {
+                if (hymn.collection) {
+                    collections[hymn.collection] = (collections[hymn.collection] || 0) + 1;
+                }
+            });
+
+            // 加入虛擬的合訂本目錄
+            const col1Count = hymns.filter(h => {
+                if (!h.title) return false;
+                const match = h.title.match(/\bH(\d{1,3})\b/i);
+                return match && parseInt(match[1]) >= 1 && parseInt(match[1]) <= 335;
+            }).length;
+
+            const col2Count = hymns.filter(h => {
+                if (!h.title) return false;
+                const match = h.title.match(/\bHH(\d{1,3})\b/i);
+                return match && parseInt(match[1]) >= 1 && parseInt(match[1]) <= 199;
+            }).length;
+
+            if (col1Count > 0) collections['合訂本第一冊'] = col1Count;
+            if (col2Count > 0) collections['合訂本第二冊'] = col2Count;
+
+            const gridContainer = document.getElementById('collections-grid');
+            gridContainer.innerHTML = '';
+
+            // 獨立的特殊詩歌集順序
+            const specialOrder = ['愛的迴響', '擘餅詩歌', '新詩歌集', '神家詩歌合訂本(1)', '神家詩歌合訂本(2)'];
+
+            // 排序分類並建立網格卡片
+            Object.keys(collections).sort((a, b) => {
+                const indexA = specialOrder.indexOf(a);
+                const indexB = specialOrder.indexOf(b);
+
+                // 1. 如果兩個都是特殊分類，依照 specialOrder 排序
+                if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+                // 2. 特殊分類排在最前面
+                if (indexA !== -1) return -1;
+                if (indexB !== -1) return 1;
+
+                // 3. 檢查是否符合 "神家詩歌第X集" 的格式
+                const regex = /神家詩歌第(.+)集/;
+                const matchA = a.match(regex);
+                const matchB = b.match(regex);
+
+                if (matchA && matchB) {
+                    return chineseToNum(matchA[1]) - chineseToNum(matchB[1]);
+                }
+                if (matchA) return 1;
+                if (matchB) return -1;
+
+                // 4. 其他情況使用預設字串排序
+                return a.localeCompare(b);
+            }).forEach(collection => {
+                const card = document.createElement('div');
+                card.className = 'p-4 border border-gray-200 dark:border-gray-800 rounded-sm text-center cursor-pointer hover:border-black dark:hover:border-gray-400 transition-colors group bg-white dark:bg-black';
+
+                card.innerHTML = `<p class="font-medium text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">${collection}</p>`;
+
+                card.onclick = () => {
+                    // 點擊後顯示該分類的列表
+                    let filtered = [];
+                    if (collection === '合訂本第一冊') {
+                        filtered = hymns.filter(h => {
+                            if (!h.title) return false;
+                            const match = h.title.match(/\bH(\d{1,3})\b/i);
+                            return match && parseInt(match[1]) >= 1 && parseInt(match[1]) <= 335;
+                        });
+                        filtered.sort((a, b) => {
+                            const numA = parseInt(a.title.match(/\bH(\d{1,3})\b/i)[1]);
+                            const numB = parseInt(b.title.match(/\bH(\d{1,3})\b/i)[1]);
+                            return numA - numB;
+                        });
+                    } else if (collection === '合訂本第二冊') {
+                        filtered = hymns.filter(h => {
+                            if (!h.title) return false;
+                            const match = h.title.match(/\bHH(\d{1,3})\b/i);
+                            return match && parseInt(match[1]) >= 1 && parseInt(match[1]) <= 199;
+                        });
+                        filtered.sort((a, b) => {
+                            const numA = parseInt(a.title.match(/\bHH(\d{1,3})\b/i)[1]);
+                            const numB = parseInt(b.title.match(/\bHH(\d{1,3})\b/i)[1]);
+                            return numA - numB;
+                        });
+                    } else {
+                        filtered = hymns.filter(h => h.collection === collection);
+                    }
+                    showList(collection, filtered);
+                };
+
+                gridContainer.appendChild(card);
+            });
+        }
+
+        // 顯示目錄網格
+        function showGrid() {
+            document.getElementById('collections-grid-container').classList.remove('hidden');
+            document.getElementById('list-container').classList.add('hidden');
+            document.getElementById('search-input').value = '';
+        }
+
+        // 顯示列表 (帶入標題與資料)
+        function showList(title, list, keyword = '') {
+            document.getElementById('collections-grid-container').classList.add('hidden');
+            document.getElementById('list-container').classList.remove('hidden');
+            document.getElementById('current-list-title').textContent = title;
+
+            renderHymnList(list, keyword);
+        }
+
+        // --- 5. 渲染列表 ---
+        function renderHymnList(list, keyword = '') {
+            const container = document.getElementById('hymn-list');
+            const stats = document.getElementById('search-stats');
+            container.innerHTML = '';
+
+            if (list.length === 0) {
+                stats.textContent = '找不到符合的詩歌';
+                stats.classList.remove('hidden');
+                return;
+            }
+
+            stats.textContent = `共 ${list.length} 首`;
+            stats.classList.remove('hidden');
+
+            list.forEach(hymn => {
+                const div = document.createElement('div');
+                div.className = 'py-4 border-b border-gray-100 dark:border-gray-800 cursor-pointer group';
+
+                let displayTitle = hymn.title;
+                let displayContent = hymn.content ? hymn.content.substring(0, 40).replace(/\^/g, '') + '...' : '';
+
+                if (keyword) {
+                    const regex = new RegExp(`(${escapeRegExp(keyword)})`, 'gi');
+                    displayTitle = displayTitle.replace(regex, '<span class="font-bold text-black dark:text-white">$1</span>');
+                    displayContent = displayContent.replace(regex, '<span class="font-bold text-black dark:text-white">$1</span>');
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-baseline mb-1 gap-3">
+                        <span class="text-sm text-gray-400 tracking-wider">${hymn.code || ''}</span>
+                        <h3 class="text-lg font-medium group-hover:text-black dark:group-hover:text-white transition-colors">${displayTitle}</h3>
+                    </div>
+                    <p class="text-sm text-gray-500 font-light truncate">${displayContent}</p>
+                `;
+
+                div.onclick = () => showHymnDetail(hymn, keyword);
+                container.appendChild(div);
+            });
+        }
+
+        // --- 6. 顯示詩歌詳情 ---
+        function showHymnDetail(hymn, keyword = '') {
+            document.getElementById('detail-title').textContent = hymn.title;
+            document.getElementById('detail-code').textContent = hymn.code || '';
+            document.getElementById('detail-collection').textContent = hymn.collection || '';
+
+            // 清理原內容的符號
+            let contentStr = hymn.content || '';
+            contentStr = contentStr.replace(/\^/g, '').replace(/\\n/g, '\n');
+
+            const contentEl = document.getElementById('detail-content');
+
+            if (keyword) {
+                const regex = new RegExp(`(${escapeRegExp(keyword)})`, 'gi');
+                contentEl.innerHTML = contentStr.replace(regex, '<span class="highlight">$1</span>');
+                setupHighlightNav();
+            } else {
+                contentEl.textContent = contentStr;
+                document.getElementById('highlight-nav').classList.add('hidden');
+            }
+
+            // 切換視圖但不清空搜尋
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-hymn').classList.add('active');
+        }
+
+        // --- 7. 搜尋系統 ---
+        function setupSearch() {
+            const input = document.getElementById('search-input');
+            let debounceTimer;
+
+            input.addEventListener('input', (e) => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const keyword = e.target.value.trim().toLowerCase();
+                    if (!keyword) {
+                        // 如果搜尋框清空，自動退回目錄網格
+                        showGrid();
+                        return;
+                    }
+
+                    // 搜尋邏輯
+                    const results = hymns.filter(h => {
+                        return (h.title && h.title.toLowerCase().includes(keyword)) ||
+                            (h.code && h.code.toLowerCase().includes(keyword)) ||
+                            (h.content && h.content.toLowerCase().includes(keyword));
+                    });
+
+                    // 顯示搜尋結果列表
+                    showList(`搜尋結果: ${keyword}`, results, keyword);
+                }, 300);
+            });
+        }
+
+        // --- 8. 關鍵字導航 ---
+        function setupHighlightNav() {
+            highlightedMatches = document.querySelectorAll('.highlight');
+            const nav = document.getElementById('highlight-nav');
+
+            if (highlightedMatches.length > 0) {
+                nav.classList.remove('hidden');
+                document.getElementById('match-total').textContent = highlightedMatches.length;
+                currentMatchIndex = 0;
+                updateHighlight();
+            } else {
+                nav.classList.add('hidden');
+            }
+
+            document.getElementById('prev-match').onclick = () => {
+                if (highlightedMatches.length === 0) return;
+                currentMatchIndex = (currentMatchIndex - 1 + highlightedMatches.length) % highlightedMatches.length;
+                updateHighlight();
+            };
+
+            document.getElementById('next-match').onclick = () => {
+                if (highlightedMatches.length === 0) return;
+                currentMatchIndex = (currentMatchIndex + 1) % highlightedMatches.length;
+                updateHighlight();
+            };
+
+            document.getElementById('close-highlight').onclick = () => {
+                nav.classList.add('hidden');
+                highlightedMatches.forEach(el => el.classList.remove('active', 'highlight'));
+            };
+        }
+
+        function updateHighlight() {
+            highlightedMatches.forEach((el, index) => {
+                if (index === currentMatchIndex) {
+                    el.classList.add('active');
+                    // 讓捲軸平滑移動到該元素，並保留上方距離給 sticky 導航列
+                    const y = el.getBoundingClientRect().top + window.scrollY - 100;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+            document.getElementById('match-current').textContent = currentMatchIndex + 1;
+        }
+
+        // --- 9. 主題與字體 ---
+        function setupTheme() {
+            const btn = document.getElementById('theme-toggle');
+            const html = document.documentElement;
+            const darkIcon = document.getElementById('theme-icon-dark');
+            const lightIcon = document.getElementById('theme-icon-light');
+
+            // 初始判斷
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                html.classList.add('dark');
+                lightIcon.classList.remove('hidden');
+            } else {
+                html.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+            }
+
+            // 點擊切換
+            btn.addEventListener('click', () => {
+                html.classList.toggle('dark');
+                if (html.classList.contains('dark')) {
+                    localStorage.theme = 'dark';
+                    darkIcon.classList.add('hidden');
+                    lightIcon.classList.remove('hidden');
+                } else {
+                    localStorage.theme = 'light';
+                    lightIcon.classList.add('hidden');
+                    darkIcon.classList.remove('hidden');
+                }
+            });
+        }
+
+        function setupFontSize() {
+            let currentSize = parseInt(localStorage.getItem('fontSize')) || 16;
+
+            const updateSize = () => {
+                // 將字體大小設定在根元素 (html)
+                document.documentElement.style.fontSize = `${currentSize}px`;
+                localStorage.setItem('fontSize', currentSize);
+            };
+
+            updateSize(); // 初始化
+
+            document.getElementById('increase-font').addEventListener('click', () => {
+                if (currentSize < 28) { currentSize += 2; updateSize(); }
+            });
+            document.getElementById('decrease-font').addEventListener('click', () => {
+                if (currentSize > 12) { currentSize -= 2; updateSize(); }
+            });
+        }
+
+        // --- 10. 語音搜尋 ---
+        function setupVoiceSearch() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const btn = document.getElementById('voice-search-btn');
+            const micIcon = document.getElementById('voice-mic-icon');
+            const stopIcon = document.getElementById('voice-stop-icon');
+            const input = document.getElementById('search-input');
+            let isRecognizing = false;
+
+            if (SpeechRecognition && btn) {
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'zh-TW';
+                recognition.continuous = false;
+
+                btn.addEventListener('click', () => {
+                    if (isRecognizing) recognition.stop();
+                    else { input.value = ''; recognition.start(); }
+                });
+
+                recognition.onstart = () => {
+                    isRecognizing = true;
+                    micIcon.classList.add('hidden');
+                    stopIcon.classList.remove('hidden');
+                };
+
+                recognition.onend = () => {
+                    isRecognizing = false;
+                    micIcon.classList.remove('hidden');
+                    stopIcon.classList.add('hidden');
+                    input.dispatchEvent(new Event('input')); // 觸發搜尋
+                };
+
+                recognition.onresult = (event) => {
+                    input.value = event.results[0][0].transcript;
+                };
+            } else if (btn) {
+                btn.style.display = 'none'; // 不支援則隱藏
+            }
+        }
+
+        // --- 11. 回報表單 ---
+        function setupReportForm() {
+            const form = document.getElementById('report-form');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const btn = document.getElementById('submit-report-btn');
+                btn.disabled = true;
+                btn.textContent = '傳送中...';
+
+                // 收集勾選的主題
+                const topics = Array.from(document.querySelectorAll('input[name="problem-topic"]:checked'))
+                    .map(cb => cb.value)
+                    .join(', ');
+                const desc = document.getElementById('problem-description').value;
+
+                const finalTopic = topics || '未指定';
+
+                const url = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
+                const formData = new FormData();
+                formData.append(TOPIC_ENTRY_ID, finalTopic);
+                formData.append(DESCRIPTION_ENTRY_ID, desc);
+
+                fetch(url, { method: 'POST', body: formData, mode: 'no-cors' })
+                    .then(() => {
+                        form.classList.add('hidden');
+                        document.getElementById('form-success-message').classList.remove('hidden');
+                    })
+                    .catch(error => {
+                        alert('傳送失敗，請稍後再試。');
+                        console.error(error);
+                    })
+                    .finally(() => {
+                        btn.disabled = false;
+                        btn.textContent = '送出';
+                    });
+            });
+        }
+
+        // --- 12. 讀取回報列表 ---
+        async function loadReports() {
+            const list = document.getElementById("report-records");
+            list.innerHTML = `<p class="text-center text-gray-400 py-10 text-sm">讀取中...</p>`;
+
+            try {
+                const res = await fetch(REPORT_API_URL);
+                const data = await res.json();
+                list.innerHTML = "";
+
+                if (data.length === 0) {
+                    list.innerHTML = `<p class="text-center text-gray-500 py-10 text-sm">目前還沒有紀錄。</p>`;
+                    return;
+                }
+
+                data.reverse().forEach(item => {
+                    const card = document.createElement("div");
+                    card.className = "p-5 border border-gray-200 dark:border-gray-800 bg-white dark:bg-black";
+                    card.innerHTML = `
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
+                            <span class="font-bold tracking-wider">${item["留言主題"] || "未填"}</span>
+                            <span class="text-xs text-gray-400 mt-1 sm:mt-0 tracking-widest">${item["時間戳記"] || ""}</span>
+                        </div>
+                        <p class="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${item["留言內容"] || "無內容"}</p>
+                    `;
+                    list.appendChild(card);
+                });
+            } catch (error) {
+                list.innerHTML = `<p class="text-center text-red-500 py-10 text-sm">載入失敗，請稍後再試。</p>`;
+            }
+        }
+
+        // 工具函式
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+    </script>
 </body>
+
 </html>
