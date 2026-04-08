@@ -610,18 +610,19 @@
                     <button onclick="navigate('report')"
                         class="hover:text-black dark:hover:text-white transition-colors tracking-widest">問題回報</button>
                     <span class="text-gray-200 dark:text-gray-800">|</span>
-                    <button onclick="navigate('report-list')" <p class="tracking-widest">© <span
-                            id="copyright-year"></span> 台灣神的眾教會</p>
-
-                        <!-- 國旗計數器 (設定灰階濾鏡以符合極簡風格，並調整尺寸) -->
-                        <a href="https://info.flagcounter.com/njoO"
-                            class="opacity-40 hover:opacity-100 transition-opacity mt-2"
-                            style="filter: grayscale(100%);">
-                            <img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_FFFFFF/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
-                                alt="Flag Counter" border="0" class="h-10 sm:h-12 w-auto">
-                        </a>
+                    <button onclick="navigate('report-list')"
+                        class="hover:text-black dark:hover:text-white transition-colors tracking-widest">觀看回報</button>
                 </div>
 
+                <p class="tracking-widest">© <span id="copyright-year"></span> 台灣神的眾教會</p>
+
+                <!-- 國旗計數器 (設定灰階濾鏡以符合極簡風格，並調整尺寸) -->
+                <a href="https://info.flagcounter.com/njoO" class="opacity-40 hover:opacity-100 transition-opacity mt-2"
+                    style="filter: grayscale(100%);">
+                    <img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_FFFFFF/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
+                        alt="Flag Counter" border="0" class="h-10 sm:h-12 w-auto">
+                </a>
+            </div>
         </footer>
 
     </div> <!-- End 主容器 -->
@@ -702,6 +703,21 @@
                 showGrid();
             }
         });
+
+        // 輔助函數：跳脫正則表達式特殊字元
+        function escapeRegExp(string) {
+            return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
+        // 輔助函數：建立模糊匹配正則表達式 (允許字與字之間有選用的 ^)
+        function createFuzzyHighlightRegex(keyword) {
+            if (!keyword) return null;
+            // 將關鍵字拆開，每個字後面都加上 \^?
+            // 但最後一個字後面不需要，或者是全域匹配
+            const parts = keyword.split('').map(char => escapeRegExp(char));
+            const pattern = `(${parts.join('\\^?')})`;
+            return new RegExp(pattern, 'gi');
+        }
 
         // 輔助函數：將中文數字轉換為阿拉伯數字以供排序
         function chineseToNum(str) {
@@ -911,10 +927,10 @@
                 div.className = 'py-4 border-b border-gray-100 dark:border-gray-800 cursor-pointer group';
 
                 let displayTitle = hymn.title;
-                let displayContent = hymn.content ? hymn.content.substring(0, 40).replace(/\^/g, '') + '...' : '';
+                let displayContent = hymn.content ? hymn.content.substring(0, 100) + (hymn.content.length > 100 ? '...' : '') : '';
 
                 if (keyword) {
-                    const regex = new RegExp(`(${escapeRegExp(keyword)})`, 'gi');
+                    const regex = createFuzzyHighlightRegex(keyword);
                     displayTitle = displayTitle.replace(regex, '<span class="font-bold text-black dark:text-white">$1</span>');
                     displayContent = displayContent.replace(regex, '<span class="font-bold text-black dark:text-white">$1</span>');
                 }
@@ -941,14 +957,13 @@
             // 更新愛心狀態
             renderFavoriteIcon(hymn.title);
 
-            // 清理原內容的符號
-            let contentStr = hymn.content || '';
-            contentStr = contentStr.replace(/\^/g, '').replace(/\\n/g, '\n');
+            // 清理原內容的符號 (保留 ^ 但處理換行)
+            let contentStr = (hymn.content || '').replace(/\\n/g, '\n');
 
             const contentEl = document.getElementById('detail-content');
 
             if (keyword) {
-                const regex = new RegExp(`(${escapeRegExp(keyword)})`, 'gi');
+                const regex = createFuzzyHighlightRegex(keyword);
                 contentEl.innerHTML = contentStr.replace(regex, '<span class="highlight">$1</span>');
                 setupHighlightNav();
             } else {
@@ -977,11 +992,16 @@
                         return;
                     }
 
-                    // 搜尋邏輯
+                    // 搜尋邏輯 (忽略 ^ 進行比對)
+                    const keywordLower = keyword.toLowerCase();
                     const results = hymns.filter(h => {
-                        return (h.title && h.title.toLowerCase().includes(keyword)) ||
-                            (h.code && h.code.toLowerCase().includes(keyword)) ||
-                            (h.content && h.content.toLowerCase().includes(keyword));
+                        const cleanTitle = (h.title || '').replace(/\^/g, '').toLowerCase();
+                        const cleanContent = (h.content || '').replace(/\^/g, '').toLowerCase();
+                        const cleanCode = (h.code || '').toLowerCase();
+
+                        return cleanTitle.includes(keywordLower) ||
+                            cleanCode.includes(keywordLower) ||
+                            cleanContent.includes(keywordLower);
                     });
 
                     // 顯示搜尋結果列表
