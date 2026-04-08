@@ -610,19 +610,17 @@
                     <button onclick="navigate('report')"
                         class="hover:text-black dark:hover:text-white transition-colors tracking-widest">問題回報</button>
                     <span class="text-gray-200 dark:text-gray-800">|</span>
-                    <button onclick="navigate('report-list')"
-                        class="hover:text-black dark:hover:text-white transition-colors tracking-widest">觀看回報</button>
+                    <button onclick="navigate('report-list')" <p class="tracking-widest">© <span
+                            id="copyright-year"></span> 台灣神的眾教會</p>
+
+                        <!-- 國旗計數器 (設定灰階濾鏡以符合極簡風格，並調整尺寸) -->
+                        <a href="https://info.flagcounter.com/njoO"
+                            class="opacity-40 hover:opacity-100 transition-opacity mt-2"
+                            style="filter: grayscale(100%);">
+                            <img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_FFFFFF/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
+                                alt="Flag Counter" border="0" class="h-10 sm:h-12 w-auto">
+                        </a>
                 </div>
-
-                <p class="tracking-widest">© <span id="copyright-year"></span> 台灣神的教會</p>
-
-                <!-- 國旗計數器 (設定灰階濾鏡以符合極簡風格，並調整尺寸) -->
-                <a href="https://info.flagcounter.com/njoO" class="opacity-40 hover:opacity-100 transition-opacity mt-2"
-                    style="filter: grayscale(100%);">
-                    <img src="https://s05.flagcounter.com/count/njoO/bg_FFFFFF/txt_000000/border_FFFFFF/columns_1/maxflags_5/viewers_0/labels_0/pageviews_1/flags_0/percent_0/"
-                        alt="Flag Counter" border="0" class="h-10 sm:h-12 w-auto">
-                </a>
-            </div>
 
         </footer>
 
@@ -635,6 +633,17 @@
         const TOPIC_ENTRY_ID = "entry.1026166853";
         const DESCRIPTION_ENTRY_ID = "entry.662465907";
         const REPORT_API_URL = "https://script.google.com/macros/s/AKfycbzpemYNQtlBwmjb9ZJihNkCWW2k-2yZY8DTBX4umCtYwL1b2_6Oh-Dx6WWamoGKgJ6Q/exec";
+
+        // --- 常用擘餅詩歌分類資料 ---
+        const breakingBreadCategories = [
+            { title: "第一奇-主永為人", codes: ['H027', 'H036', 'H043', 'HH092', 'HH093', 'HH094', 'HH097', 'HH122', '10094', '10128', '10133', '11047', '11048', '1204', '1218', '1220', '1222', '1223', '1236', '1239', '1240', '1320', '1332', '1343', '1531', '1536', '1615', '1623', '1714', '1716', '1718', '1719', '2036'] },
+            { title: "第二奇-主為我釘十字架", codes: ['H040', 'H052', 'H054', 'H060', 'HH098', 'HH108', 'HH123', '10150', '10151', '11051', '11053', '11055', '1326', '1327', '1329', '1339', '1566', '1616', '1617', '1764', '1933', '1969', '1978', '11179', '1257'] },
+            { title: "第三奇-主復活", codes: ['H069', 'H078', 'H159', 'H258', 'HH109', 'HH119', '1382', '1385', '1432', '1433', '1434', '1435', '1442', '1445', '1457', '1465', '1477', '1534', '1605', '1613', '1630', '1736', '2116', '2124', '2132', '11138', '1244'] },
+            { title: "第四奇-主為我升天", codes: ["H090", "H162", "H165", "H1180", "H329", "HH112", "HH117", '1357', '1437', '1440', '1441', '1475', '1619', '1624', '1628', '1939', '1945', '2047', '2280'] },
+            { title: "第五奇-聖靈降臨 父主永住我心", codes: ["H092", "H287", "HH002", "HH003", "HH199", '10124', '1318', '1323', '1325', '1335', '1341', '1348', '1353', '1519', '1526', '1527', '1548', '1549', '1560', '1565', '1567', '1572', '1576', '1578', '1580', '1582', '1586', '1606', '1625', '1709', '1715', '1731', '1745', '1759', '1762', '1763', '1779', '1787', '1809', '1911', '1917', '1951', '1960', '2076', '2156', '2170', '11096', '11199', '11207', '1247', '1253'] },
+            { title: "第六奇-主再來提接我們", codes: ["H100", "H101", "H1112", "H114", "H115", "HH083", "HH128", "HH183", '10142', '10145', '10204', '11206', '11209', '1276', '1278', '1279', '1280', '1316', '1337', '1345', '1358', '1370', '1479', '1529', '1559', '1610', '1612', '1638', '1658', '1987', '2048', '2354', '2369'] },
+            { title: "第七奇-我們與主一同降臨", codes: ["H104", "H105", "H106", "H120", "H130", "HH107", "HH111", "HH160", "HH163", '10154', '1242', '1362', '1374', '1538', '1614', '1631', '1632', '1633', '1644', '1646', '1649', '1653', '1657', '1661', '1665', '1667', '1668', '1670', '1677', '1678', '1679', '1680', '1681', '1684', '1721', '1734', '1744', '1750', '1792', '2123', '2173', '2176', '2236', '2361', '2370', '2379', '2381', '2383', '2385', '2387'] }
+        ];
 
         let hymns = [];
         let collections = {};
@@ -709,12 +718,12 @@
             return total;
         }
 
-        // --- 4. 目錄網格處理 (Grid Directory) ---
+        // --- 4. 處理目錄資料 ---
         function processCollections() {
-            collections = {};
-            hymns.forEach(hymn => {
-                if (hymn.collection) {
-                    collections[hymn.collection] = (collections[hymn.collection] || 0) + 1;
+            const collections = {};
+            hymns.forEach(h => {
+                if (h.collection) {
+                    collections[h.collection] = (collections[h.collection] || 0) + 1;
                 }
             });
 
@@ -734,11 +743,19 @@
             if (col1Count > 0) collections['合訂本第一冊'] = col1Count;
             if (col2Count > 0) collections['合訂本第二冊'] = col2Count;
 
+            // 手動加入 '常用擘餅詩歌' 分類
+            collections['常用擘餅詩歌'] = breakingBreadCategories.length;
+
             const gridContainer = document.getElementById('collections-grid');
             gridContainer.innerHTML = '';
 
-            // 獨立的特殊詩歌集順序
-            const specialOrder = ['愛的迴響', '擘餅詩歌', '新詩歌集', '神家詩歌合訂本(1)', '神家詩歌合訂本(2)'];
+            const specialOrder = [
+                '常用擘餅詩歌',
+                '合訂本第一冊',
+                '合訂本第二冊',
+                '神家詩歌合訂本(1)',
+                '神家詩歌合訂本(2)',
+            ];
 
             // 排序分類並建立網格卡片
             Object.keys(collections).sort((a, b) => {
@@ -771,7 +788,11 @@
                 card.innerHTML = `<p class="font-medium text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">${collection}</p>`;
 
                 card.onclick = () => {
-                    // 點擊後顯示該分類的列表
+                    if (collection === '常用擘餅詩歌') {
+                        showBreakingBreadSubCategories();
+                        return;
+                    }
+
                     let filtered = [];
                     if (collection === '合訂本第一冊') {
                         filtered = hymns.filter(h => {
@@ -805,8 +826,57 @@
             });
         }
 
+        // 顯示常用擘餅詩歌子分類
+        function showBreakingBreadSubCategories() {
+            const gridContainer = document.getElementById('collections-grid');
+            gridContainer.innerHTML = '';
+
+            breakingBreadCategories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'p-4 border border-gray-200 dark:border-gray-800 rounded-sm text-center cursor-pointer hover:border-black dark:hover:border-gray-400 transition-colors group bg-white dark:bg-black';
+                card.innerHTML = `<p class="font-medium text-sm text-gray-600 dark:text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">${cat.title}</p>`;
+
+                card.onclick = () => {
+                    const filtered = filterHymnsByCodes(cat.codes);
+                    showList(cat.title, filtered);
+                };
+                gridContainer.appendChild(card);
+            });
+
+            document.getElementById('collections-grid-container').classList.remove('hidden');
+            document.getElementById('list-container').classList.add('hidden');
+        }
+
+        // 根據編號列表過濾詩歌
+        function filterHymnsByCodes(codes) {
+            return hymns.filter(h => {
+                // 檢查原始編號
+                if (h.code && codes.includes(h.code)) return true;
+
+                // 檢查標題中的 H/HH 編號
+                if (h.title) {
+                    for (const code of codes) {
+                        if (code.startsWith('H')) {
+                            const isHH = code.startsWith('HH');
+                            const prefix = isHH ? 'HH' : 'H';
+                            const numStr = isHH ? code.substring(2) : code.substring(1);
+                            const num = parseInt(numStr);
+                            if (isNaN(num)) continue;
+
+                            // 建立正則表達式，考慮可能的補零 (例如 H027 或 H27)
+                            // 這裡使用與 processCollections 類似的邏輯
+                            const regex = new RegExp(`\\b${prefix}0*${num}\\b`, 'i');
+                            if (h.title.match(regex)) return true;
+                        }
+                    }
+                }
+                return false;
+            });
+        }
+
         // 顯示目錄網格
         function showGrid() {
+            processCollections();
             document.getElementById('collections-grid-container').classList.remove('hidden');
             document.getElementById('list-container').classList.add('hidden');
             document.getElementById('search-input').value = '';
