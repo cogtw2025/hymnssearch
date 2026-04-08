@@ -175,9 +175,12 @@
                 </button>
                 <div class="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1"></div>
                 <!-- 我的最愛 -->
-                <button onclick="navigate('favorites')" class="hover:text-red-500 transition-colors focus:outline-none" title="我的最愛">
+                <button onclick="navigate('favorites')" class="hover:text-red-500 transition-colors focus:outline-none"
+                    title="我的最愛">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                        </path>
                     </svg>
                 </button>
                 <div class="w-px h-4 bg-gray-300 dark:bg-gray-700 mx-1"></div>
@@ -328,12 +331,20 @@
                     <p id="detail-collection" class="text-xs text-gray-400 mb-2 tracking-widest uppercase"></p>
                     <div class="flex items-center justify-center gap-3">
                         <h2 id="detail-title" class="text-2xl font-bold mb-1"></h2>
-                        <button id="toggle-favorite-btn" class="text-gray-300 hover:text-red-500 transition-colors focus:outline-none" title="加入 / 移除最愛">
-                            <svg id="favorite-icon-empty" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        <button id="toggle-favorite-btn"
+                            class="text-gray-300 hover:text-red-500 transition-colors focus:outline-none"
+                            title="加入 / 移除最愛">
+                            <svg id="favorite-icon-empty" class="w-6 h-6" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                </path>
                             </svg>
-                            <svg id="favorite-icon-filled" class="w-6 h-6 hidden text-red-500" fill="currentColor" viewBox="0 0 24 24">
-                                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.414l-8.828-8.828a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                            <svg id="favorite-icon-filled" class="w-6 h-6 hidden text-red-500" fill="currentColor"
+                                viewBox="0 0 24 24">
+                                <path fill-rule="evenodd"
+                                    d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.414l-8.828-8.828a4 4 0 010-5.656z"
+                                    clip-rule="evenodd"></path>
                             </svg>
                         </button>
                     </div>
@@ -445,7 +456,6 @@
             <main id="view-prayers" class="view-section">
                 <div class="text-center mb-12">
                     <h2 class="text-2xl font-bold tracking-widest mb-2">日程禱告</h2>
-                    <p class="text-sm text-gray-500 tracking-wider">將今日交託在主手中</p>
                 </div>
 
                 <div class="max-w-2xl mx-auto space-y-12 px-2 sm:px-4">
@@ -557,15 +567,12 @@
             <main id="view-cheers" class="view-section">
                 <div class="text-center mb-12">
                     <h2 class="text-2xl font-bold tracking-widest mb-2">歡呼</h2>
-                    <p class="text-sm text-gray-500 tracking-wider">因祂高興歡喜</p>
                 </div>
 
                 <div class="max-w-2xl mx-auto space-y-12 px-2 sm:px-4">
 
                     <section>
-                        <h3
-                            class="text-sm font-bold tracking-widest mb-5 border-b border-gray-200 dark:border-gray-800 pb-3 uppercase">
-                            早晨的宣告與讚美</h3>
+
                         <div
                             class="space-y-6 text-lg font-light tracking-wide text-gray-800 dark:text-gray-200 leading-relaxed">
                             <p>「主啊！寶貴今日是祢所訂定的日子，使我在其中因祢高興歡喜！」</p>
@@ -644,13 +651,13 @@
         function navigate(viewId) {
             window.scrollTo({ top: 0, behavior: 'smooth' });
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            
+
             if (viewId === 'favorites') {
                 document.getElementById('view-home').classList.add('active');
                 showFavorites();
                 return;
             }
-            
+
             document.getElementById('view-' + viewId).classList.add('active');
 
             if (viewId === 'report-list') {
@@ -1141,7 +1148,7 @@
             const btn = document.getElementById('toggle-favorite-btn');
             const iconEmpty = document.getElementById('favorite-icon-empty');
             const iconFilled = document.getElementById('favorite-icon-filled');
-            
+
             if (btn) {
                 btn.onclick = () => toggleFavorite(title);
                 if (favs.includes(title)) {
