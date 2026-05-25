@@ -687,23 +687,26 @@
 
         // --- 2. 視圖導覽系統 (SPA Router) ---
         function navigate(viewId) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
 
             if (viewId === 'favorites') {
                 document.getElementById('view-home').classList.add('active');
                 showFavorites();
-                return;
+            } else {
+                document.getElementById('view-' + viewId).classList.add('active');
+
+                if (viewId === 'report-list') {
+                    loadReports();
+                } else if (viewId === 'home') {
+                    // 如果是回首頁，預設顯示目錄網格，清空搜尋
+                    showGrid();
+                }
             }
 
-            document.getElementById('view-' + viewId).classList.add('active');
-
-            if (viewId === 'report-list') {
-                loadReports();
-            } else if (viewId === 'home') {
-                // 如果是回首頁，預設顯示目錄網格，清空搜尋
-                showGrid();
-            }
+            // 延遲置頂，避開手機版滾動慣性
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 30);
         }
 
         // --- 3. 初始化與資料載入 ---
@@ -1069,9 +1072,13 @@
             }
 
             // 切換視圖但不清空搜尋
-            window.scrollTo({ top: 0, behavior: 'smooth' });
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.getElementById('view-hymn').classList.add('active');
+
+            // 延遲置頂，避開手機版滾動慣性
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 30);
         }
 
         // --- 7. 搜尋系統 ---
