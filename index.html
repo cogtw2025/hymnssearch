@@ -1495,11 +1495,15 @@
                     card.className = "p-5 border border-gray-200 dark:border-gray-800 bg-white dark:bg-black";
                     card.innerHTML = `
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3">
-                            <span class="font-bold tracking-wider">${item["留言主題"] || "未填"}</span>
-                            <span class="text-xs text-gray-400 mt-1 sm:mt-0 tracking-widest">${item["時間戳記"] || ""}</span>
+                            <span class="report-topic font-bold tracking-wider"></span>
+                            <span class="report-time text-xs text-gray-400 mt-1 sm:mt-0 tracking-widest"></span>
                         </div>
-                        <p class="text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed whitespace-pre-wrap">${item["留言內容"] || "無內容"}</p>
+                        <p class="report-content text-sm text-gray-600 dark:text-gray-300 font-light leading-relaxed whitespace-pre-wrap"></p>
                     `;
+                    // 留言由訪客填寫，一律以純文字顯示，避免夾帶的 HTML 或程式碼被執行
+                    card.querySelector('.report-topic').textContent = item["留言主題"] || "未填";
+                    card.querySelector('.report-time').textContent = item["時間戳記"] || "";
+                    card.querySelector('.report-content').textContent = item["留言內容"] || "無內容";
                     list.appendChild(card);
                 });
             } catch (error) {
