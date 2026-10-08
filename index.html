@@ -160,6 +160,111 @@
         html.use-bold.dark .highlight {
             box-shadow: 0 0 0 2px #fff;
         }
+
+        /* 投影模式 */
+        #projector {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: #000;
+            color: #fff;
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: none;
+            touch-action: none;
+        }
+
+        #projector.show-controls {
+            cursor: default;
+        }
+
+        #projector-stage {
+            position: absolute;
+            inset: 0;
+            padding: 6vh 5vw 9vh;
+            transition: opacity 0.3s;
+        }
+
+        #projector.blackout #projector-stage,
+        #projector.blackout #projector-footer {
+            opacity: 0;
+        }
+
+        #projector-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        #projector-text {
+            text-align: center;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        #projector-text .projector-meta {
+            display: block;
+            font-size: 0.4em;
+            font-weight: 400;
+            color: #a3a3a3;
+            margin-top: 0.8em;
+        }
+
+        #projector-footer {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 2vh 3vw;
+            font-size: clamp(12px, 1.8vh, 20px);
+            color: #737373;
+            transition: opacity 0.3s;
+        }
+
+        #projector-controls {
+            position: absolute;
+            top: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+
+        #projector.show-controls #projector-controls {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #projector-controls button {
+            width: 44px;
+            height: 44px;
+            border: 1px solid #404040;
+            background: rgba(23, 23, 23, 0.8);
+            color: #fff;
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        #projector-controls button:hover {
+            background: #404040;
+        }
+
+        .projector-hint {
+            font-size: 13px;
+            color: #a3a3a3;
+            margin-right: 8px;
+        }
     </style>
 </head>
 
@@ -370,6 +475,15 @@
                                 <path fill-rule="evenodd"
                                     d="M3.172 5.172a4 4 0 015.656 0L12 8.343l3.172-3.171a4 4 0 115.656 5.656L12 21.414l-8.828-8.828a4 4 0 010-5.656z"
                                     clip-rule="evenodd"></path>
+                            </svg>
+                        </button>
+                        <button onclick="openProjector()"
+                            class="text-gray-300 hover:text-black dark:hover:text-white transition-colors focus:outline-none"
+                            title="投影模式">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
                             </svg>
                         </button>
                     </div>
@@ -652,6 +766,25 @@
 
     </div> <!-- End 主容器 -->
 
+    <!-- ==================== 投影模式 (全螢幕) ==================== -->
+    <div id="projector" class="hidden">
+        <div id="projector-stage">
+            <div id="projector-box">
+                <div id="projector-text"></div>
+            </div>
+        </div>
+        <div id="projector-footer">
+            <span id="projector-title"></span>
+            <span id="projector-page"></span>
+        </div>
+        <div id="projector-controls">
+            <span class="projector-hint">← → 換頁　B 黑屏　Esc 離開</span>
+            <button onclick="projectorGo(-1)" title="上一頁">‹</button>
+            <button onclick="projectorGo(1)" title="下一頁">›</button>
+            <button onclick="closeProjector()" title="離開投影">✕</button>
+        </div>
+    </div>
+
     <!-- JavaScript 邏輯整合 -->
     <script>
         // --- 1. 基本設定與資料 ---
@@ -679,6 +812,7 @@
         let currentListHymns = [];
         let currentSearchKeyword = '';
         let savedScrollY = 0;
+        let currentDetailHymn = null;
 
         // 內建少量備用資料，避免 hymns.json 遺失時完全空白
         const fallbackData = [
@@ -1050,6 +1184,7 @@
         function showHymnDetail(hymn, keyword = '') {
             // 儲存當前滾動位置
             savedScrollY = window.scrollY;
+            currentDetailHymn = hymn;
 
             document.getElementById('detail-title').textContent = hymn.title;
             document.getElementById('detail-code').textContent = hymn.code || '';
@@ -1393,6 +1528,184 @@
             let favHymns = hymns.filter(h => favs.includes(h.title));
             showList('我的最愛', favHymns);
         }
+
+        // --- 14. 投影模式 ---
+        const PROJECTOR_MAX_LINES = 8;
+        let projectorSlides = [];
+        let projectorIndex = 0;
+        let projectorControlsTimer;
+        let projectorPointerX = null;
+
+        // 將歌詞切成投影片：遇到段落編號、副歌或空行換頁，過長段落平均拆開
+        function buildProjectorSlides(hymn) {
+            const lines = (hymn.content || '').replace(/\\n/g, '\n').replace(/\^/g, '').split('\n').map(l => l.trim());
+            const blocks = [];
+            let current = [];
+            const flush = () => {
+                if (current.length) blocks.push(current);
+                current = [];
+            };
+
+            lines.forEach(line => {
+                if (!line) { flush(); return; }
+                // 略過譜面資訊 (例如 "D3/4 Capo 2 Play C")
+                if (/^[A-G][b#]?\d\/\d/.test(line) || /\bCapo\b/i.test(line)) return;
+                if (/^\d+\s*[.、]/.test(line) || /^(副歌|和|合)\s*[:：]/.test(line)) flush();
+                current.push(line);
+            });
+            flush();
+
+            const slides = [];
+            blocks.forEach(block => {
+                const parts = Math.ceil(block.length / PROJECTOR_MAX_LINES);
+                const size = Math.ceil(block.length / parts);
+                for (let i = 0; i < block.length; i += size) {
+                    slides.push(block.slice(i, i + size).join('\n'));
+                }
+            });
+            return slides;
+        }
+
+        // 標題拆成主標題與括號內的編號資訊，例如 "袮這份愛 (E2-146 / H001)"
+        function splitHymnTitle(title) {
+            const match = (title || '').match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+            return match ? { main: match[1], sub: match[2] } : { main: title || '', sub: '' };
+        }
+
+        function openProjector() {
+            const hymn = currentDetailHymn;
+            if (!hymn) return;
+            if (document.activeElement) document.activeElement.blur();
+
+            projectorSlides = [null, ...buildProjectorSlides(hymn)]; // 第一張為標題頁
+            projectorIndex = 0;
+
+            const { main } = splitHymnTitle(hymn.title);
+            document.getElementById('projector-title').textContent = `${hymn.code || ''}　${main}`;
+
+            const projector = document.getElementById('projector');
+            projector.classList.remove('hidden', 'blackout');
+            document.body.style.overflow = 'hidden';
+
+            if (projector.requestFullscreen) {
+                projector.requestFullscreen().catch(() => { });
+            }
+            renderProjectorSlide();
+            showProjectorControls();
+        }
+
+        function closeProjector() {
+            const projector = document.getElementById('projector');
+            if (projector.classList.contains('hidden')) return;
+            projector.classList.add('hidden');
+            document.body.style.overflow = '';
+            if (document.fullscreenElement) document.exitFullscreen().catch(() => { });
+        }
+
+        function projectorGo(step) {
+            const next = projectorIndex + step;
+            if (next < 0 || next >= projectorSlides.length) return;
+            projectorIndex = next;
+            document.getElementById('projector').classList.remove('blackout');
+            renderProjectorSlide();
+        }
+
+        function renderProjectorSlide() {
+            const textEl = document.getElementById('projector-text');
+            const slide = projectorSlides[projectorIndex];
+            textEl.innerHTML = '';
+
+            if (slide === null) {
+                const hymn = currentDetailHymn;
+                const { main, sub } = splitHymnTitle(hymn.title);
+                textEl.textContent = main;
+                const meta = document.createElement('span');
+                meta.className = 'projector-meta';
+                meta.textContent = [hymn.code, sub, hymn.collection].filter(Boolean).join('　');
+                textEl.appendChild(meta);
+            } else {
+                textEl.textContent = slide;
+            }
+
+            document.getElementById('projector-page').textContent = `${projectorIndex + 1} / ${projectorSlides.length}`;
+            fitProjectorText();
+        }
+
+        // 以二分搜尋找出不超出畫面的最大字級
+        function fitProjectorText() {
+            const box = document.getElementById('projector-box');
+            const textEl = document.getElementById('projector-text');
+            let low = 16;
+            let high = Math.max(low, Math.floor(box.clientHeight / 5));
+            while (low < high) {
+                const mid = Math.ceil((low + high) / 2);
+                textEl.style.fontSize = `${mid}px`;
+                if (textEl.scrollHeight <= box.clientHeight && textEl.scrollWidth <= box.clientWidth) {
+                    low = mid;
+                } else {
+                    high = mid - 1;
+                }
+            }
+            textEl.style.fontSize = `${low}px`;
+        }
+
+        function showProjectorControls() {
+            const projector = document.getElementById('projector');
+            projector.classList.add('show-controls');
+            clearTimeout(projectorControlsTimer);
+            projectorControlsTimer = setTimeout(() => projector.classList.remove('show-controls'), 2500);
+        }
+
+        function isProjectorOpen() {
+            return !document.getElementById('projector').classList.contains('hidden');
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!isProjectorOpen()) return;
+            const nextKeys = ['ArrowRight', 'ArrowDown', 'PageDown', ' ', 'Enter'];
+            const prevKeys = ['ArrowLeft', 'ArrowUp', 'PageUp', 'Backspace'];
+            if (nextKeys.includes(e.key)) {
+                projectorGo(1);
+            } else if (prevKeys.includes(e.key)) {
+                projectorGo(-1);
+            } else if (e.key === 'Home') {
+                projectorGo(-projectorIndex);
+            } else if (e.key === 'End') {
+                projectorGo(projectorSlides.length - 1 - projectorIndex);
+            } else if (e.key === 'b' || e.key === 'B' || e.key === '.') {
+                // 簡報翻頁器的黑屏鍵通常送出 "." 或 "B"
+                document.getElementById('projector').classList.toggle('blackout');
+            } else if (e.key === 'Escape') {
+                closeProjector();
+            } else {
+                return;
+            }
+            e.preventDefault();
+        });
+
+        // 點擊或滑動換頁：左側三分之一或向右滑為上一頁，其餘為下一頁
+        document.getElementById('projector').addEventListener('pointerdown', (e) => {
+            projectorPointerX = e.target.closest('#projector-controls') ? null : e.clientX;
+        });
+        document.getElementById('projector').addEventListener('pointerup', (e) => {
+            if (projectorPointerX === null) return;
+            const dx = e.clientX - projectorPointerX;
+            projectorPointerX = null;
+            if (Math.abs(dx) > 50) {
+                projectorGo(dx > 0 ? -1 : 1);
+            } else {
+                projectorGo(e.clientX < window.innerWidth / 3 ? -1 : 1);
+            }
+        });
+        document.getElementById('projector').addEventListener('mousemove', showProjectorControls);
+
+        // 使用者以 Esc 或瀏覽器按鈕離開全螢幕時，一併關閉投影
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) closeProjector();
+        });
+        window.addEventListener('resize', () => {
+            if (isProjectorOpen()) fitProjectorText();
+        });
     </script>
 </body>
 
