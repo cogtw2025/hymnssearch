@@ -871,6 +871,25 @@
             }
         });
 
+        // 註冊 Service Worker：詩歌資料存在裝置上，再次開啟時不必重新下載
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(error => console.warn('Service Worker 註冊失敗:', error));
+            });
+
+            // 背景發現新版詩歌資料時，直接換上新資料，不打斷目前畫面
+            navigator.serviceWorker.addEventListener('message', async (event) => {
+                if (event.data?.type !== 'hymns-updated') return;
+                try {
+                    const response = await fetch('hymns.json');
+                    hymns = await response.json();
+                    processCollections();
+                } catch (error) {
+                    console.warn('更新詩歌資料失敗:', error);
+                }
+            });
+        }
+
         // 輔助函數：跳脫正則表達式特殊字元
         function escapeRegExp(string) {
             return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
